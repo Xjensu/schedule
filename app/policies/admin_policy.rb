@@ -39,6 +39,14 @@ class AdminPolicy < ApplicationPolicy
     user.admin?
   end
 
+  def editor?
+    user.admin?
+  end
+
+  def schedule_for_date?
+    user.admin?
+  end
+
   # Scope для ограничения доступа к записям
   class Scope < ApplicationPolicy::Scope
     attr_reader :user, :scope

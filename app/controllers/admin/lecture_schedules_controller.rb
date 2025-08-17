@@ -1,6 +1,6 @@
 class Admin::LectureSchedulesController < ApplicationController
-  before_action :set_special_periods, only: [:index]
   before_action :set_resources, only: [:index]
+  before_action :set_special_periods, only: [:index]
   before_action :get_schedules, only: [:index]
 
 
@@ -49,20 +49,18 @@ class Admin::LectureSchedulesController < ApplicationController
 
   private
 
-  def set_resources
-    @group = params[:group_id]
-    @course = params[:course]
-    @special_period_id = params[:special_period_id].present? ? params[:special_period_id].to_i : SpecialPeriod.find_by(academic_period_id: @academic_period_id).id
-    puts @special_period_id
-  end
-
-
-  def set_special_periods
-    @academic_period_id = params[:academic_period_id]
-    @academic_period = AcademicPeriod.find(@academic_period_id)
+   def set_special_periods
     @periods = 7.times.map do |i|
        SpecialPeriodManager.find_or_create_lecture_period( @academic_period_id, @group, @course, @academic_period.start_date + i.days )
     end.compact
+    @special_period_id = params[:special_period_id].present? ? params[:special_period_id].to_i : SpecialPeriod.find_by(academic_period_id: @academic_period_id).id
+  end
+
+  def set_resources
+    @group = params[:group_id]
+    @course = params[:course]
+    @academic_period_id = params[:academic_period_id]
+    @academic_period = AcademicPeriod.find(@academic_period_id)
   end
   
   def get_schedules

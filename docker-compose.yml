@@ -12,6 +12,9 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
+    networks:
+      - internal_network
+    restart: always
   
   rails-app:
     build: .
@@ -30,9 +33,25 @@ services:
       - app-storage:/rails/storage
     depends_on:
       - main-database
+    networks:
+      - internal_network
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports: 
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - rails-app
+    networks:
+      - internal_network
+    restart: always
 
 volumes:
   postgres_data: {}
   app-storage: {}
 networks:
-  default:
+  internal_network:

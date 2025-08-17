@@ -6,6 +6,6 @@ class Admin::BaseAdminController < ApplicationController
   private
 
   def verify_admin
-    authorize :admin, :access?
+    authorize :admin
   end
 end

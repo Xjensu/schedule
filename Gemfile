@@ -71,3 +71,9 @@ gem "RubyInline", "~> 3.14"
 gem "pundit", "~> 2.5"
 
 gem "htmlbeautifier", "~> 1.4"
+
+gem 'redis', '~> 5.1.0'
+gem 'redis-namespace', '~> 1.11.0'
+gem 'redis-sentinel', '~> 1.2.0'
+
+gem "dotenv-rails", "~> 3.1", groups: [:development, :test, :production]

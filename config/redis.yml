@@ -1,0 +1,31 @@
+default: &default
+  sentinels:
+    - host: <%= ENV['REDIS_SENTINEL_1_HOST'] || 'sentinel-1' %>
+      port: <%= ENV['REDIS_SENTINEL_1_PORT'] || 26379 %>
+    - host: <%= ENV['REDIS_SENTINEL_2_HOST'] %>
+      port: <%= ENV['REDIS_SENTINEL_2_PORT'] || 26379 %>
+    - host: <%= ENV['REDIS_SENTINEL_3_HOST'] || 'sentinel-3' %>
+      port: <%= ENV['REDIS_SENTINEL_3_PORT'] || 26379 %>
+  master_name: <%= ENV['REDIS_MASTER_NAME'] || 'mymaster' %>
+  password: <%= ENV['REDIS_PASSWORD'] %>
+  sentinel_password: <%= ENV['REDIS_SENTINEL_PASSWORD'] %> 
+  role: :master
+  connect_timeout: 5
+  read_timeout: 5
+  write_timeout: 5
+  reconnect_attempts: 3
+  retry_attempts: 3
+  retry_delay: 1
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
+  connect_timeout: 3
+  read_timeout: 3
+  write_timeout: 3
+  reconnect_attempts: 5

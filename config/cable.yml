@@ -3,15 +3,31 @@
 # not a terminal started via bin/rails console! Add "console" to any action or any ERB template view
 # to make the web console appear.
 development:
-  adapter: async
+  adapter: redis
+  url: redis://:${REDIS_PASSWORD}@${REDIS_MASTER_NAME}
+  sentinels:
+    - host: <%= ENV['REDIS_SENTINEL_1_HOST'] %>
+      port: <%= ENV['REDIS_SENTINEL_1_PORT'] %>
+    - host: <%= ENV['REDIS_SENTINEL_2_HOST'] %>
+      port: <%= ENV['REDIS_SENTINEL_2_PORT'] %>
+    - host: <%= ENV['REDIS_SENTINEL_3_HOST'] %>
+      port: <%= ENV['REDIS_SENTINEL_3_PORT'] %>
+  password: <%= ENV['REDIS_PASSWORD'] %>
+  sentinel_password: <%= ENV['REDIS_PASSWORD'] %>
 
 test:
   adapter: test
 
 production:
-  adapter: solid_cable
-  connects_to:
-    database:
-      writing: cable
-  polling_interval: 0.1.seconds
+  adapter: redis
+  url: redis://:${REDIS_PASSWORD}@${REDIS_MASTER_NAME}
+  sentinels:
+    - host: <%= ENV['REDIS_SENTINEL_1_HOST'] %>
+      port: <%= ENV['REDIS_SENTINEL_1_PORT'] %>
+    - host: <%= ENV['REDIS_SENTINEL_2_HOST'] %>
+      port: <%= ENV['REDIS_SENTINEL_2_PORT'] %>
+    - host: <%= ENV['REDIS_SENTINEL_3_HOST'] %>
+      port: <%= ENV['REDIS_SENTINEL_3_PORT'] %>
+  password: <%= ENV['REDIS_PASSWORD'] %>
+  sentinel_password: <%= ENV['REDIS_PASSWORD'] %>
   message_retention: 1.day

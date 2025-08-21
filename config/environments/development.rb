@@ -26,7 +26,24 @@ Rails.application.configure do
   end
 
   # Change to :null_store to avoid any caching.
-  config.cache_store = :memory_store
+  config.cache_store = :redis_cache_store, {
+    url: ENV['REDIS_URL'] || "redis://:#{ENV['REDIS_PASSWORD']}@#{ENV['REDIS_MASTER_NAME']}",
+    sentinels: (ENV['REDIS_SENTINELS'] || '').split(',').map do |sentinel|
+      host, port = sentinel.split(':')
+      {
+        host: host,
+        port: port || 26379,
+        password: ENV['REDIS_SENTINEL_PASSWORD'] || ENV['REDIS_PASSWORD']
+      }
+    end,
+    password: ENV['REDIS_PASSWORD'],
+    namespace: "cache:develpment",
+    connect_timeout: ENV['REDIS_CONNECT_TIMEOUT'] || 3,
+    read_timeout: ENV['REDIS_READ_TIMEOUT'] || 3,
+    write_timeout: ENV['REDIS_WRITE_TIMEOUT'] || 3,
+    reconnect_attempts: ENV['REDIS_RECONNECT_ATTEMPTS'] || 3,
+    db: ENV['REDIS_DB'] || 0
+  }
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local

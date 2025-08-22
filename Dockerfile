@@ -48,6 +48,9 @@ RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
+COPY config/sidekiq.yml /app/config/sidekiq.yml
+COPY config/redis.yml /app/config/redis.yml
+
 # Install node modules
 COPY package.json yarn.lock ./
 RUN yarn install --immutable

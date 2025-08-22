@@ -34,7 +34,7 @@ Rails.application.configure do
     read_timeout: 3,
     write_timeout: 3,
     reconnect_attempts: 3,
-    role: :master,
+    role: :slave,
   }
 
   config.active_storage.service = :local
@@ -53,8 +53,7 @@ Rails.application.configure do
 
   # Don't log any deprecations.
   config.active_support.report_deprecations = false
-  config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
+  config.active_job.queue_adapter = :sidekiq
   config.action_mailer.default_url_options =  { protocol: 'http' , host: "example.com" }
   config.i18n.fallbacks = true
 

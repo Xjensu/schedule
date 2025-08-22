@@ -100,8 +100,7 @@ services:
         "--protected-mode", "no",
         "--repl-backlog-size", "64mb",
         "--repl-timeout", "60",
-        "--min-replicas-to-write", "1",
-        "--min-replicas-max-lag", "10",
+        "--min-replicas-to-write", "0",
         "--client-output-buffer-limit", "replica 512mb 128mb 60",
         "--maxmemory", "2gb",
         "--maxmemory-policy", "allkeys-lru",
@@ -306,6 +305,44 @@ services:
     networks:
       redis-net:
     restart: unless-stopped
+
+  # SIDEKIQ
+  sidekiq:
+    build: .
+    container_name: sidekiq
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    environment:
+      - RAILS_ENV=${RAILS_ENV}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
+
+      - REDIS_MASTER_NAME=mymaster
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_SENTINEL_PASSWORD=${REDIS_SENTINEL_PASSWORD}
+      - REDIS_SENTINEL_1_HOST=sentinel-1
+      - REDIS_SENTINEL_1_PORT=26379
+      - REDIS_SENTINEL_2_HOST=sentinel-2
+      - REDIS_SENTINEL_2_PORT=26379
+      - REDIS_SENTINEL_3_HOST=sentinel-3
+      - REDIS_SENTINEL_3_PORT=26379
+
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@mymaster/0
+    volumes:
+      - app-storage:/rails/storage
+    depends_on:
+      - main-database
+      - redis-master
+      - sentinel-1
+      - sentinel-2
+      - sentinel-3
+    networks:
+      internal_network:
+      redis-net:
+    restart: always
         
   # RAILS APP CLUSTERS
   rails-app-1:

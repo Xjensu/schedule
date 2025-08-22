@@ -36,10 +36,11 @@ Rails.application.routes.draw do
       get 'academic_period', to: 'academic_periods#academic_period'
     end
     get '/faculties/:faculty_id/student_groups/delete', to: 'student_groups#delete', as: 'delete_student_group'
+    require 'sidekiq/web'
+    mount Sidekiq::Web => '/sidekiq'
   end
   devise_for :users
 
   get "up" => "rails/health#show", as: :rails_health_check
-  get '/health/redis', to: 'redis_health#up'
   root "home#index"
 end

@@ -4,6 +4,7 @@
   - mailers
   - critical
   - low
+  - faculty_processing
 :timeout: 30
 :logfile: ./log/sidekiq.log
 

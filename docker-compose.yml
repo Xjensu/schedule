@@ -87,41 +87,26 @@ services:
       - "6379:6379"
     volumes:
       - redis-master-data:/data
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - TZ=Europe/Moscow
     command:
       [
         "redis-server",
+        "--port", "6379",
         "--appendonly", "yes",
-        "--requirepass", "${REDIS_PASSWORD}",
         "--masterauth", "${REDIS_PASSWORD}",
+        "--requirepass", "${REDIS_PASSWORD}",
         "--protected-mode", "no",
         "--repl-backlog-size", "64mb",
         "--repl-timeout", "60",
         "--min-replicas-to-write", "0",
         "--client-output-buffer-limit", "replica 512mb 128mb 60",
-        "--maxmemory", "2gb",
-        "--maxmemory-policy", "allkeys-lru",
-        "--save", "900 1",
-        "--save", "300 10",
-        "--save", "60 10000",
-        "--loglevel", "notice"
+        "--loglevel", "debug"
       ]
-    healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "--no-auth-warning", "ping"]
-      interval: 5s
-      timeout: 2s
-      retries: 3
     networks:
-      redis-net:
+      internal_network:
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 3G
 
 
   redis-slave-1:
@@ -129,46 +114,31 @@ services:
     container_name: redis-slave-1
     hostname: redis-slave-1
     depends_on:
-      redis-master:
-        condition: service_healthy
+      - redis-master
     ports:
       - "6380:6379"
     volumes:
       - redis-slave-1-data:/data
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - TZ=Europe/Moscow
     command:
       [
         "redis-server",
-        "--appendonly", "yes",
-        "--requirepass", "${REDIS_PASSWORD}",
+        "--port", "6379",
+        "--appendonly", "yes",        
         "--masterauth", "${REDIS_PASSWORD}",
+        "--requirepass", "${REDIS_PASSWORD}",
         "--replicaof", "redis-master", "6379",
-        "--replica-announce-ip", redis-slave-1,
-        "--replica-announce-port", "6379",
         "--protected-mode", "no",
         "--repl-diskless-sync", "yes",
+        "--replica-announce-ip", "redis-slave-1",
+        "--replica-announce-port", "6379",
         "--client-output-buffer-limit", "replica 512mb 128mb 60",
-        "--maxmemory", "2gb",
-        "--maxmemory-policy", "allkeys-lru",
-        "--save", "900 1",
-        "--save", "300 10",
-        "--save", "60 10000",
-        "--loglevel", "notice"
+        "--loglevel", "debug"
       ]
-    healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "--no-auth-warning", "ping"]
-      interval: 5s
-      timeout: 2s
-      retries: 3
     networks:
-      redis-net:
+      internal_network:
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 3G
 
 
   redis-slave-2:
@@ -176,43 +146,30 @@ services:
     container_name: redis-slave-2
     hostname: redis-slave-2
     depends_on:
-      redis-master:
-        condition: service_healthy
+      - redis-master
     ports:
       - "6381:6379"
     volumes:
       - redis-slave-2-data:/data
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - TZ=Europe/Moscow
     command: [
       "redis-server",
-      "--appendonly", "yes",
-      "--requirepass", "${REDIS_PASSWORD}",
+      "--port", "6379",
+      "--appendonly", "yes",        
       "--masterauth", "${REDIS_PASSWORD}",
+      "--requirepass", "${REDIS_PASSWORD}",
       "--replicaof", "redis-master", "6379",
       "--protected-mode", "no",
       "--repl-diskless-sync", "yes",
+      "--replica-announce-ip", "redis-slave-2",
+      "--replica-announce-port", "6379",
       "--client-output-buffer-limit", "replica 512mb 128mb 60",
-        "--maxmemory", "2gb",
-        "--maxmemory-policy", "allkeys-lru",
-        "--save", "900 1",
-        "--save", "300 10",
-        "--save", "60 10000",
-        "--loglevel", "notice"
+        "--loglevel", "debug"
     ]
-    healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "--no-auth-warning", "ping"]
-      interval: 5s
-      timeout: 2s
-      retries: 3
     networks:
-      redis-net:
+      internal_network:
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 3G
 
 
   sentinel-1:
@@ -221,28 +178,27 @@ services:
     hostname: sentinel-1
     depends_on:
       - redis-master
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
     ports:
       - "26379:26379"
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_SENTINEL_PASSWORD=${REDIS_SENTINEL_PASSWORD}
+      - TZ=Europe/Moscow
     command: >
       sh -c 'echo "bind 0.0.0.0" > /etc/sentinel.conf &&
-            echo "requirepass ${REDIS_SENTINEL_PASSWORD}" >> /etc/sentinel.conf &&
-            echo "sentinel monitor mymaster redis-master 6379 2" >> /etc/sentinel.conf &&
-            echo "sentinel auth-pass mymaster ${REDIS_PASSWORD}" >> /etc/sentinel.conf &&
+            echo "loglevel debug" >> /etc/sentinel.conf &&
+            echo "dir /tmp" >> /etc/sentinel.conf &&   
+            echo "sentinel announce-hostnames yes" >> /etc/sentinel.conf &&
             echo "sentinel resolve-hostnames yes" >> /etc/sentinel.conf &&
-            echo "sentinel down-after-milliseconds mymaster 15000" >> /etc/sentinel.conf &&
+            echo "sentinel monitor mymaster redis-master 6379 2" >> /etc/sentinel.conf &&
+            echo "requirepass ${REDIS_SENTINEL_PASSWORD}" >> /etc/sentinel.conf &&
+            echo "sentinel auth-pass mymaster ${REDIS_PASSWORD}" >> /etc/sentinel.conf &&
+            echo "sentinel down-after-milliseconds mymaster 5000" >> /etc/sentinel.conf &&
             echo "sentinel failover-timeout mymaster 60000" >> /etc/sentinel.conf &&
             echo "sentinel parallel-syncs mymaster 1" >> /etc/sentinel.conf &&
-            echo "sentinel announce-port 26379" >> /etc/sentinel.conf
-            echo "sentinel resolve-hostnames yes" >> /etc/sentinel.conf
-            redis-sentinel /etc/sentinel.conf --protected-mode no'
+            redis-sentinel /etc/sentinel.conf --protected-mode no --loglevel debug'
     networks:
-      redis-net:
+      internal_network:
     restart: unless-stopped
 
 
@@ -252,37 +208,32 @@ services:
     hostname: sentinel-2
     depends_on:
       - redis-master
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
     ports:
       - "26380:26379"
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_SENTINEL_PASSWORD=${REDIS_SENTINEL_PASSWORD}
+      - TZ=Europe/Moscow
     command: >
       sh -c 'echo "bind 0.0.0.0" > /etc/sentinel.conf &&
-            echo "requirepass ${REDIS_SENTINEL_PASSWORD}" >> /etc/sentinel.conf &&
-            echo "sentinel monitor mymaster redis-master 6379 2" >> /etc/sentinel.conf &&
-            echo "sentinel auth-pass mymaster ${REDIS_PASSWORD}" >> /etc/sentinel.conf &&
+            echo "sentinel announce-hostnames yes" >> /etc/sentinel.conf &&
             echo "sentinel resolve-hostnames yes" >> /etc/sentinel.conf &&
-            echo "sentinel down-after-milliseconds mymaster 15000" >> /etc/sentinel.conf &&
+            echo "sentinel monitor mymaster redis-master 6379 2" >> /etc/sentinel.conf &&
+            echo "masterauth ${REDIS_PASSWORD}" >> /etc/sentinel.conf &&
+            echo "requirepass ${REDIS_SENTINEL_PASSWORD}" >> /etc/sentinel.conf &&
+            echo "sentinel auth-pass mymaster ${REDIS_PASSWORD}" >> /etc/sentinel.conf &&
+            echo "sentinel down-after-milliseconds mymaster 5000" >> /etc/sentinel.conf &&
             echo "sentinel failover-timeout mymaster 60000" >> /etc/sentinel.conf &&
             echo "sentinel parallel-syncs mymaster 1" >> /etc/sentinel.conf &&
-            echo "sentinel announce-port 26379" >> /etc/sentinel.conf
-            echo "sentinel resolve-hostnames yes" >> /etc/sentinel.conf
-            redis-sentinel /etc/sentinel.conf --protected-mode no'
+            redis-sentinel /etc/sentinel.conf --protected-mode no --loglevel debug'
     networks:
-      redis-net:
+      internal_network:
     restart: unless-stopped
 
   sentinel-3:
     image: redis:8.2-alpine
     container_name: sentinel-3
     hostname: sentinel-3
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
     depends_on:
       - redis-master
     ports:
@@ -290,20 +241,20 @@ services:
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_SENTINEL_PASSWORD=${REDIS_SENTINEL_PASSWORD}
+      - TZ=Europe/Moscow
     command: >
       sh -c 'echo "bind 0.0.0.0" > /etc/sentinel.conf &&
             echo "requirepass ${REDIS_SENTINEL_PASSWORD}" >> /etc/sentinel.conf &&
             echo "sentinel monitor mymaster redis-master 6379 2" >> /etc/sentinel.conf &&
             echo "sentinel auth-pass mymaster ${REDIS_PASSWORD}" >> /etc/sentinel.conf &&
             echo "sentinel resolve-hostnames yes" >> /etc/sentinel.conf &&
-            echo "sentinel down-after-milliseconds mymaster 15000" >> /etc/sentinel.conf &&
+            echo "sentinel down-after-milliseconds mymaster 5000" >> /etc/sentinel.conf &&
             echo "sentinel failover-timeout mymaster 60000" >> /etc/sentinel.conf &&
             echo "sentinel parallel-syncs mymaster 1" >> /etc/sentinel.conf &&
-            echo "sentinel announce-port 26379" >> /etc/sentinel.conf
-            echo "sentinel resolve-hostnames yes" >> /etc/sentinel.conf
-            redis-sentinel /etc/sentinel.conf --protected-mode no'
+            echo "sentinel announce-hostnames yes" >> /etc/sentinel.conf &&
+            redis-sentinel /etc/sentinel.conf --protected-mode no --loglevel debug'
     networks:
-      redis-net:
+      internal_network:
     restart: unless-stopped
 
   # SIDEKIQ
@@ -341,7 +292,6 @@ services:
       - sentinel-3
     networks:
       internal_network:
-      redis-net:
     restart: always
         
   # RAILS APP CLUSTERS
@@ -379,7 +329,6 @@ services:
       - sentinel-3
     networks:
       internal_network: 
-      redis-net:
     restart: always
   
   rails-app-2:
@@ -416,7 +365,6 @@ services:
       - sentinel-3
     networks:
       internal_network:
-      redis-net:
     restart: always
 
   # NGINX
@@ -446,6 +394,4 @@ networks:
   internal_network:
     driver: bridge
   postgres:
-    driver: bridge
-  redis-net:
     driver: bridge

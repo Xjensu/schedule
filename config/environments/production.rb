@@ -30,12 +30,10 @@ Rails.application.configure do
     ],
     password: ENV['REDIS_PASSWORD'],
     namespace: "cache:production",
-    connect_timeout: 3,
-    read_timeout: 3,
-    write_timeout: 3,
-    reconnect_attempts: 3,
-    role: :slave,
+    role: :master,
   }
+
+  config.time_zone = "Moscow"
 
   config.active_storage.service = :local
 

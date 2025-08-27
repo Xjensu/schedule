@@ -81,3 +81,5 @@ gem "dotenv-rails", "~> 3.1", groups: [:development, :test, :production]
 gem "hiredis", "~> 0.6.3"
 
 gem "sidekiq", "~> 8.0"
+
+gem "sidekiq-cron", "~> 2.3"

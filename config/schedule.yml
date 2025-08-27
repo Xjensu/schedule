@@ -1,0 +1,14 @@
+process_dates:
+  cron: "45 13 * * *"
+  class: "DateProcessingJob"
+  args: []
+
+process_static_datas:
+  cron: "45 13 * * *"
+  class: "StaticDatasJob"
+  args: []
+
+process_schedules_teachers:
+  cron: "45 13 * * *"
+  class: "TeacherScheduleJob"
+  args: []

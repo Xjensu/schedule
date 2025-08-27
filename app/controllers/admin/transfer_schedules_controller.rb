@@ -122,7 +122,8 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
   end
 
   def add_schedule(schedule_id, date, time, group_id, course)
-    @added = AddedSchedule.new( schedule_id: schedule_id, date: date, time: time, student_group_id: group_id, course: course )
+    schedule = Schedule.find(schedule_id)
+    @added = AddedSchedule.new( schedule_id: schedule_id, date: date, time: time, student_group_id: group_id, course: course, classroom_id: schedule.classroom_id, teacher_id: schedule.teacher_id )
     if @added.save
       puts "ADDED"
     else

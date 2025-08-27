@@ -47,6 +47,10 @@ class AdminPolicy < ApplicationPolicy
     user.admin?
   end
 
+  def update_sidebar?
+    user.admin?
+  end
+
   # Scope для ограничения доступа к записям
   class Scope < ApplicationPolicy::Scope
     attr_reader :user, :scope

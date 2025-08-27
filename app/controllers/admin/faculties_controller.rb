@@ -1,8 +1,7 @@
 class Admin::FacultiesController < Admin::BaseAdminController
   before_action :get_faculty, only: [:edit, :update, :destroy]
   def index
-    @faculties = Faculty.all.order(:full_name)
-    @faculty = Faculty.new
+    @faculties = Rails.cache.read('all_faculties')
   end
 
   def new

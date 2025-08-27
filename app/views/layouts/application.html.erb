@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
   <head>
     <title><%= content_for(:title) || "Test App" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -32,8 +32,9 @@
     <div id="flash" class="position-fixed top-0 end-0 p-3" style="z-index: 11">
       <%= render 'shared/flash' %>
     </div>
-    <div class="container">
+    <div class="container min-vh-100">
       <%= yield %>
     </div>
   </body>
+  <%= render 'layouts/footer' %>
 </html>

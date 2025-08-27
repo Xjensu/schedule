@@ -17,6 +17,14 @@
       <div class="invalid-feedback d-block"><%= message %></div>
     <% end %>
   </div>
+
+  <div class="mb-3">
+    <%= form.label "Время обработки", class: 'form-label' %>
+    <%= form.time_field :processing_time, class: "form-control #{'is-invalid' if faculty.errors[:short_name].any?}" %>
+    <% faculty.errors.full_messages_for(:processing_time).each do |message| %>
+      <div class="invalid-feedback d-block"><%= message %></div>
+    <% end %>
+  </div>
     
   <%= form.submit 'Подтвердить', class: 'btn btn-primary' %>
   <%= link_to 'Отмена', admin_faculties_path, class: 'btn btn-secondary' %>

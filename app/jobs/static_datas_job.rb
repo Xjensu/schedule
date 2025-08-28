@@ -1,5 +1,6 @@
 class StaticDatasJob
   include Sidekiq::Job
+  sidekiq_options retry: 3, dead: false
 
   def perform
     faculties_cache_key = "all_faculties"

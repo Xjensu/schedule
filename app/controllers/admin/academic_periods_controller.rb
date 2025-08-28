@@ -28,15 +28,12 @@ class Admin::AcademicPeriodsController < Admin::BaseAdminController
 
   def destroy
     @academic_period = AcademicPeriod.find(params[:id])
-    faculty_id = @academic_period.faculty_id
+    @faculty_id = @academic_period.faculty_id
     
     respond_to do |format|
-      if @academic_period.destroy
-        @academic_periods = AcademicPeriod.where(faculty_id: faculty_id)
-        format.turbo_stream
-      else
-        format.turbo_stream { render :destroy_error }
-      end
+      AcademicPeriodDestroyJob.perform_async(@academic_period.id)
+      @academic_periods = AcademicPeriod.where(faculty_id: @faculty_id)
+      format.turbo_stream
     end
   end
 
@@ -47,19 +44,6 @@ class Admin::AcademicPeriodsController < Admin::BaseAdminController
         format.turbo_stream { render :create }
       else
         format.turbo_stream { render :create_error }
-      end
-    end
-  end
-
-  def destroy
-    @faculty_id = @academic_period.faculty_id
-    
-    respond_to do |format|
-      if @academic_period.destroy
-        @academic_periods = AcademicPeriod.where(faculty_id: @faculty_id)
-        format.turbo_stream
-      else
-        format.turbo_stream { render :destroy_error }
       end
     end
   end

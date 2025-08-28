@@ -5,6 +5,7 @@
   - critical
   - low
   - faculty_processing
+  - academic_period_cleanup
 :timeout: 30
 :logfile: ./log/sidekiq.log
 

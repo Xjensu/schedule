@@ -1,5 +1,6 @@
 class TeacherScheduleJob
   include Sidekiq::Job
+  sidekiq_options retry: 3, dead: false
 
   def perform
     @dates = Rails.cache.read('current_dates')

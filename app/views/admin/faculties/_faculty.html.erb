@@ -9,30 +9,26 @@
         <div class="col-md-8 col-12 order-2 order-md-1">
           <h5 class="card-title"><%= faculty.full_name %></h5>
           
-          <% if current_user %>
-            <p class="card-text text-muted">
-              <strong>Short name:</strong> <%= faculty.short_name %>
-            </p>
-          <% end %>
+          <p class="card-text text-muted">
+            <strong>Short name:</strong> <%= faculty.short_name %>
+          </p>
         </div>
 
-         <% if current_user %>
-          <div class="flex-shrink-0" data-faculty-ignore >
-            <div class="d-flex gap-2 justify-content-end">
-              <%= link_to edit_admin_faculty_path(faculty), 
-                  class: 'btn btn-sm btn-outline-primary' do %>
-                <i class="bi bi-pencil"></i>
-              <% end %>
+        <div class="flex-shrink-0" data-faculty-ignore >
+          <div class="d-flex gap-2 justify-content-end">
+            <%= link_to edit_admin_faculty_path(faculty), 
+                class: 'btn btn-sm btn-outline-primary' do %>
+              <i class="bi bi-pencil"></i>
+             <% end %>
               
-              <%= button_to admin_faculty_path(faculty), 
-                  method: :delete, 
-                  form: { data: { turbo_confirm: 'Are you sure?' } }, 
-                  class: 'btn btn-sm btn-outline-danger' do %>
-                <i class="bi bi-trash"></i>
-              <% end %>
-            </div>
+            <%= button_to admin_faculty_path(faculty), 
+                method: :delete, 
+                form: { data: { turbo_confirm: 'Are you sure?' } }, 
+                class: 'btn btn-sm btn-outline-danger' do %>
+              <i class="bi bi-trash"></i>
+            <% end %>
           </div>
-        <% end %>
+        </div>
       </div>
     </div>
   </div>

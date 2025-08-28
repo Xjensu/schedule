@@ -13,6 +13,9 @@ application.register("faculty", FacultyController)
 import GroupsController from "./groups_controller"
 application.register("groups", GroupsController)
 
+import AcademicPeriodController from "./academic_period_controller"
+application.register("academic-period", AcademicPeriodController)
+
 import ResizableController from "./teacher_search_controller"
 application.register("teacher-search", ResizableController)
 

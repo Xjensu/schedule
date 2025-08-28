@@ -5,8 +5,8 @@
   </div>
 <% end %>
 
-<%= turbo_stream.replace 'academic_period_select' do %>
-  <select class="form-select" id="academic_period" data-groups-target="academicPeriodSelect">
+<%= turbo_stream.replace 'academic_period' do %>
+  <select class="form-select" id="academic_period" data-academic-period-target="academicPeriodSelect" data-groups-target="academicPeriodSelect">
     <% @academic_periods.each do |period| %>
       <option value="<%= period.id %>"><%= period.name %></option>
     <% end %>
@@ -18,14 +18,10 @@
 
 <%= turbo_stream.replace 'editable' do %>
   <%= turbo_frame_tag 'editable' do %>
-    <%= link_to "Новая группа", new_admin_faculty_student_group_path(faculty_id: params[:faculty_id]), class: "btn btn-primary" %>
+    <%= link_to "Новая группа", new_admin_faculty_student_group_path(faculty_id: @faculty_id), class: "btn btn-primary" %>
     <%= link_to "Удалить группу", "#", class: "btn btn-danger", data: { action: "click->groups#deleteGroup" } %>
-    <%= link_to "Новый период", new_admin_academic_period_path(faculty_id: params[:faculty_id]), class: "btn btn-primary" %>
-    <% if @academic_periods.any? %>
-      <%= button_to "Удалить период", admin_academic_period_path(id: @academic_periods.first.id, faculty_id: params[:faculty_id]), 
-            method: :delete, class: "btn btn-danger" %>
-    <% else %>
-      <%= button_to "Удалить период", "#", method: :delete, class: "btn btn-danger disabled", disabled: true %>
-    <% end %>
+    <%= link_to "Новый период", new_admin_academic_period_path(faculty_id: @faculty_id), class: "btn btn-primary" %>
+    <%= link_to "Редактировать период", "#", class: "btn btn-warning", data: { action: "click->academic-period#editAcademicPeriod",academic_period_target: "editPeriodBtn" } %>
+    <%= link_to "Удалить период", "#", class: "btn btn-danger", data: { action: "click->academic-period#deleteAcademicPeriod",academic_period_target: "deletePeriodBtn" } %>
   <% end %>
 <% end %>

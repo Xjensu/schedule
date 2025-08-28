@@ -1,7 +1,8 @@
 class Admin::AcademicPeriodsController < Admin::BaseAdminController
   before_action :set_group, only: [:new], if: -> { params[:group_id].present? }
-  before_action :set_query_params, only: [:create, :destroy]
-  before_action :set_faculty_id, only: [:new, :create, :destroy]
+  before_action :set_query_params, only: [:create, :update, :destroy]
+  before_action :set_faculty_id, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_academic_period, only: [:edit, :update, :destroy]
 
   def new
     @academic_period = AcademicPeriod.new
@@ -21,6 +22,10 @@ class Admin::AcademicPeriodsController < Admin::BaseAdminController
     end
   end
 
+  def edit
+    # @academic_period уже установлен через before_action
+  end
+
   def destroy
     @academic_period = AcademicPeriod.find(params[:id])
     faculty_id = @academic_period.faculty_id
@@ -35,7 +40,35 @@ class Admin::AcademicPeriodsController < Admin::BaseAdminController
     end
   end
 
+  def update
+    respond_to do |format|
+      if @academic_period.update(academic_period_params)
+        @academic_periods = AcademicPeriod.where(faculty_id: @faculty_id)
+        format.turbo_stream { render :create }
+      else
+        format.turbo_stream { render :create_error }
+      end
+    end
+  end
+
+  def destroy
+    @faculty_id = @academic_period.faculty_id
+    
+    respond_to do |format|
+      if @academic_period.destroy
+        @academic_periods = AcademicPeriod.where(faculty_id: @faculty_id)
+        format.turbo_stream
+      else
+        format.turbo_stream { render :destroy_error }
+      end
+    end
+  end
+
   private 
+
+  def set_academic_period
+    @academic_period = AcademicPeriod.find(params[:id])
+  end
 
   def set_group
     @group = StudentGroup.find(params[:group_id])

@@ -1,14 +1,6 @@
 <%= turbo_stream.update 'flash' do %>
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    Ошибка при удалении академического периода.
+    Не удалось удалить академический период. Возможно, с ним связаны расписания.
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
-<% end %>
-
-<%= turbo_stream.replace 'editable' do %>
-  <%= turbo_frame_tag 'editable' do %>
-    <%= link_to "Новая группа", new_admin_faculty_student_group_path(faculty_id: params[:faculty_id]), class: "btn btn-primary" %>
-    <%= link_to "Удалить группу", "#", class: "btn btn-danger", data: { action: "click->groups#deleteGroup" } %>
-    <%= link_to "Новый период", new_admin_academic_period_path(faculty_id: params[:faculty_id]), class: "btn btn-primary" %>
-  <% end %>
 <% end %>

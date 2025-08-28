@@ -15,7 +15,7 @@ Rails.application.routes.draw do
         post :update_sidebar
       end
     end
-    resources :academic_periods, only: [:new, :create, :destroy]
+    resources :academic_periods, only: [:new, :create, :destroy, :edit, :update, :destroy]
     resources :default_schedules, only: [:index, :create, :update, :destroy] do
       get 'editor', on: :collection, as: :editor
     end

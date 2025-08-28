@@ -1,13 +1,13 @@
 <%= turbo_frame_tag 'editable' do %>
   <div class="card">
     <div class="card-header">
-      <h4>Создание нового учебного периода</h4>
+      <h4>Редактирование учебного периода</h4>
     </div>
     <div class="card-body">
       <%= render 'form', 
            academic_period: @academic_period, 
-           url: admin_academic_periods_path(faculty_id: @faculty_id),
-           submit_text: "Создать" %>
+           url: admin_academic_period_path(@academic_period, faculty_id: @faculty_id),
+           submit_text: "Обновить" %>
     </div>
   </div>
 <% end %>

@@ -2,43 +2,42 @@
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" id="transfersList" aria-labelledby="offcanvasScrollingLabel"
          data-controller="resizable" data-resizable-min-width-value="300" data-resizable-max-width-value="600" data-resizable-target="offcanvas" style="width: 300px">
-    <div class="offcanvas-header">
-      <p>Список изменений</p>
-      <%# <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button> %>
-    </div>
-    <div class="offcanvas-body" data-controller="transfer-schedule transfer-changes" data-transfer-schedule-group-id-value="<%= params[:group_id] %>">
-      <div data-toggle-target="content">
-        <div class="d-flex align-items-center justify-content-between">
-          <span>transfers_sourceDate</span>
-          <button data-action="toggle#toggle" class="btn btn-link">
-            <i data-toggle-target="icon" class="bi bi-chevron-right"></i>
-          </button>
-        </div>
-        <div class="mt-2">
-          <%= turbo_frame_tag "transfers_sourceDate" do %>
-            <!-- Контент для добавления -->
-          <% end %>
-        </div>
-      </div>
-      <br/>
-      <div data-toggle-target="content">
-        <div class="d-flex align-items-center justify-content-between">
-          <span>transfers_targetDate</span>
-          <button data-action="toggle#toggle" class="btn btn-link">
-            <i data-toggle-target="icon" class="bi bi-chevron-right"></i>
-          </button>
-        </div>
-        <div class="mt-2">
-          <%= turbo_frame_tag "transfers_targetDate" do %>
-            <!-- Контент для добавления -->
-          <% end %>
-        </div>
-      </div>
-    </div>
-    <div class="offcanvas-resizer-right" 
-       data-resizable-target="resizer"
-       data-action="mousedown->resizable#startResize"></div>
+  <div class="offcanvas-header">
+    <p>Список изменений</p>
+    <%# <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button> %>
   </div>
+  <div class="offcanvas-body" data-controller="transfer-schedule transfer-changes" data-transfer-schedule-group-id-value="<%= params[:group_id] %>">
+    <div data-toggle-target="content">
+      <div class="d-flex align-items-center justify-content-between">
+        <span>transfers_sourceDate</span>
+        <button data-action="toggle#toggle" class="btn btn-link">
+          <i data-toggle-target="icon" class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+      <div class="mt-2">
+        <%= turbo_frame_tag "transfers_sourceDate" do %>
+          <!-- Контент для добавления -->
+        <% end %>
+       </div>
+    </div>
+    <br/>
+    <div data-toggle-target="content">
+      <div class="d-flex align-items-center justify-content-between">
+        <span>transfers_targetDate</span>
+        <button data-action="toggle#toggle" class="btn btn-link">
+          <i data-toggle-target="icon" class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+      <div class="mt-2">
+        <%= turbo_frame_tag "transfers_targetDate" do %>
+          <!-- Контент для добавления -->
+        <% end %>
+      </div>
+    </div>
+   </div>
+  <div class="offcanvas-resizer-right" 
+    data-resizable-target="resizer"
+    data-action="mousedown->resizable#startResize"></div>
 </div>
 
 <div class="container" data-controller="date-change"

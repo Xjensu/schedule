@@ -1,0 +1,23 @@
+<%= form_with(model: academic_period, url: url, local: true) do |form| %>
+  <%= form.hidden_field :faculty_id, value: academic_period.faculty_id %>
+  <div class="mb-3">
+    <%= form.label :name, "Название периода", class: "form-label" %>
+    <%= form.text_field :name, class: "form-control", required: true %>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <%= form.label :start_date, "Дата начала", class: "form-label" %>
+      <%= form.date_field :start_date, class: "form-control", required: true %>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :end_date, "Дата окончания", class: "form-label" %>
+      <%= form.date_field :end_date, class: "form-control", required: true %>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <%= form.submit submit_text, class: "btn btn-primary" %>
+    <%= link_to "Отмена", :back, class: "btn btn-danger", data: { turbo_frame: "_top" } %>
+  </div>
+<% end %>

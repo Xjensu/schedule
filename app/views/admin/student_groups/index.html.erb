@@ -1,6 +1,6 @@
 <%= link_to "Назад", admin_faculties_path %>
 
-<div data-controller="groups" class="mb-5">
+<div data-controller="groups academic-period" class="mb-5">
 
     <!-- Поля выбора группы и курса -->
     <form class="row g-3">
@@ -27,20 +27,19 @@
       <!-- академ период -->
       <div class="col-md-6">
         <label for="academic_period" class="form-label">Академический период</label>
-        <select class="form-select" id="academic_period" data-groups-target="academicPeriodSelect">
+        <select class="form-select" id="academic_period" data-academic-period-target="academicPeriodSelect" data-groups-target="academicPeriodSelect">
           <% AcademicPeriod.where(faculty_id: params[:faculty_id]).each do |period| %>
             <option value="<%= period.id %>"><%= period.name %></option>
           <% end %>
         </select>
       </div>
 
-      <!-- Кнопки редактирования -->
-      <% if current_user %>
-        <%= turbo_frame_tag "editable" do %>
-          <%= link_to "Новая группа", new_admin_faculty_student_group_path(faculty_id: params[:faculty_id]), class: "btn btn-primary" %>
-          <%= link_to "Удалить группу", "#", class: "btn btn-danger", data: { action: "click->groups#deleteGroup" } %>
-          <%= link_to "Новый период", new_admin_academic_period_path(faculty_id: params[:faculty_id]), class: "btn btn-primary" %>
-        <% end %>
+     <%= turbo_frame_tag "editable" do %>
+        <%= link_to "Новая группа", new_admin_faculty_student_group_path(faculty_id: params[:faculty_id]), class: "btn btn-primary" %>
+        <%= link_to "Удалить группу", "#", class: "btn btn-danger", data: { action: "click->groups#deleteGroup" } %>
+        <%= link_to "Новый период", new_admin_academic_period_path(faculty_id: params[:faculty_id]), class: "btn btn-primary" %>
+        <%= link_to "Редактировать период", "#", class: "btn btn-warning", data: { action: "click->academic-period#editAcademicPeriod", academic_period_target: "editPeriodBtn" } %>
+        <%= link_to "Удалить период", "#", class: "btn btn-danger", data: { action: "click->academic-period#deleteAcademicPeriod",academic_period_target: "deletePeriodBtn" } %>
       <% end %>
 
       <div class="col-12 justify-content-center align-items-center d-flex gap-2">

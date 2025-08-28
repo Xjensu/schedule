@@ -11,9 +11,7 @@
     <% end %>
   </div>
 
-  <% if current_user.present? %>
-    <%= turbo_frame_tag "faculty_new" do %>
-      <%= link_to "New", new_admin_faculty_path, class: 'btn btn-primary'%>
-    <% end %>
+  <%= turbo_frame_tag "faculty_new" do %>
+    <%= link_to "New", new_admin_faculty_path, class: 'btn btn-primary'%>
   <% end %>
 </div>

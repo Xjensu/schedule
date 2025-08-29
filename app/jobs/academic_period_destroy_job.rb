@@ -4,7 +4,15 @@ class AcademicPeriodDestroyJob
 
   def perform(period_id)
     academic_period = AcademicPeriod.find_by(id: period_id)
-    return unless academic_period
+    unless academic_period
+      Rails.logger.warn "AcademicPeriod #{period_id} not found - skipping destruction"
+      return
+    end
+
+    if academic_period.destroyed?
+      Rails.logger.info "AcademicPeriod #{period_id} already destroyed"
+      return
+    end
 
     ActiveRecord::Base.transaction do
       cleanup_added_schedules(period_id)

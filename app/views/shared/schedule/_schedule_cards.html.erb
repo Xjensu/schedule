@@ -1,10 +1,11 @@
 <div class="row">
   <% default_times.each do |time| %>
     <% 
-      regular_schedule = schedules.where(start_time: time, under: false)
+      regular_schedule = schedules.where(start_time: Time.zone.parse(time), under: false)
       regular_schedule += [nil] * (2 - regular_schedule.size)
       
-      under_schedule = schedules.where(start_time: time, under: true)
+      
+      under_schedule = schedules.where(start_time: Time.zone.parse(time), under: true)
       under_schedule += [nil] * (2 - under_schedule.size)
     %>
 

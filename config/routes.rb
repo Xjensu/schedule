@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+require 'sidekiq/cron/web'
 Rails.application.routes.draw do
   mount ActionCable.server => '/cable'
   
@@ -36,7 +38,6 @@ Rails.application.routes.draw do
       get 'academic_period', to: 'academic_periods#academic_period'
     end
     get '/faculties/:faculty_id/student_groups/delete', to: 'student_groups#delete', as: 'delete_student_group'
-    require 'sidekiq/web'
     mount Sidekiq::Web => '/sidekiq'
   end
   devise_for :users

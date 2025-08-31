@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   mount ActionCable.server => '/cable'
   
   namespace :admin do 
+    resources :test_schedules, only: [:index, :new, :create, :edit, :update, :destroy]
+
     resources :lecture_schedules, only: [:index, :new, :create, :edit, :update, :destroy] do
       collection do
         get :editor

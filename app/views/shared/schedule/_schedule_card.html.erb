@@ -1,3 +1,4 @@
+<% link_to "Назад", :back %>
 <div class="card schedule-card mb-2"
     id="schedule_card_<%= schedule.present? ? schedule.id : "%s_%s_%s" % [param[:time].to_s, param[:date].to_s.gsub('_', '-'), schedule_counter.to_s] %>"
      data-controller="<%= card_stimulus[:controller] %>"

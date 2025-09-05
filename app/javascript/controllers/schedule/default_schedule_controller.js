@@ -11,7 +11,6 @@ export default class extends Controller {
   }
 
   select(event) {
-    console.log("da")
     this.offcanvas.show()
 
     const card = event.currentTarget

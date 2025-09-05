@@ -36,7 +36,7 @@ class AcademicPeriod < ApplicationRecord
 
   def reschedule_destruction_job
     # Перепланируем только если изменился end_date или период был восстановлен
-    return unless saved_change_to_end_date? || saved_change_to_deleted_at?
+    return unless saved_change_to_end_date?
 
     if end_date.present?
       schedule_destruction_job

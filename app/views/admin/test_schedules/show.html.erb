@@ -1,0 +1,7 @@
+<%= link_to "Назад", admin_test_schedules_path(group_id: @special_period.student_group_id, course: @special_period.course, academic_period_id: @special_period.academic_period_id) %>
+
+<%= turbo_frame_tag "schedule_container" do %>
+  <%= @schedule_renderer.render %>
+<% end %>
+
+<%= render 'shared/schedule/offcanvas' %>

@@ -63,5 +63,8 @@ application.register("transfers-classroom-selection", TransfersClassroomSelectio
 import UnsavedChangesController from "./schedule/unsaved_changes_controller"
 application.register("unsaved-changes", UnsavedChangesController)
 
-import LectureSCheduleCardsController from "./schedule/lecture/lecture_schedule_cards"
-application.register("lecture-schedule-cards", LectureSCheduleCardsController)
+import LectureScheduleCardsController from "./schedule/lecture/lecture_schedule_cards"
+application.register("lecture-schedule-cards", LectureScheduleCardsController)
+
+import TestScheduleCardsController from "./schedule/test_schedule/test_schedule_cards"
+application.register("test-schedule-cards", TestScheduleCardsController)

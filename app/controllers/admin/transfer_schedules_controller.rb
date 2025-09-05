@@ -14,6 +14,7 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
     @changes = @schedules.changes
     @schedules = @schedules.get_schedule
     @target = params[:target]
+    @default_times = ['8:30', '10:10', '11:45', '14:00', '15:35', '17:10', '18:45']
     
     @schedule_renderer = ScheduleRenderer.new(
           self,

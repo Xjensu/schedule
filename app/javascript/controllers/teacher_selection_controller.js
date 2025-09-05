@@ -1,10 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static targets=["hiddenField"]
   connect() {
     this.hiddenField = document.getElementById('schedule_teacher_id');
-    const selectedTeacherId = this.hiddenField.value || 0;
-
+    console.log(this.hiddenFieldTarget)
+    const selectedTeacherId = this.hiddenFieldTarget.value || 0;
+    
     const radioButton = document.getElementById(`schedule_teacher_id_${selectedTeacherId}`);
     if (radioButton) {
       radioButton.checked = true;
@@ -12,7 +14,7 @@ export default class extends Controller {
   }
 
   selectTeacher(event) {
-    this.hiddenField.value = event.target.value
+    this.hiddenFieldTarget.value = event.target.value
   }
 
 }

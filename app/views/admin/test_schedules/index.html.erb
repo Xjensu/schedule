@@ -1,2 +1,32 @@
-<h1>TestSchedules#index</h1>
-<p>Find me in app/views/test_schedules/index.html.erb</p>
+<%= link_to "Назад",  admin_faculty_student_groups_path( StudentGroup.find(params[:group_id]).faculty_id ), :class => "btn btn-primary" %>
+
+<div>
+  <h3>
+    Лекционная неделя
+  </h3>
+
+  <% if !@special_period.exists? %>
+    <% special_period = SpecialPeriod.new(academic_period_id: params[:academic_period_id], student_group_id: params[:group_id], course: params[:course], name: :test) %>
+    <%= form_for special_period, url: admin_special_periods_path do |f| %>
+      <%= f.hidden_field :academic_period_id, value: special_period.academic_period_id %>
+      <%= f.hidden_field :course, value: special_period.course %>
+      <%= f.hidden_field :student_group_id, value: special_period.student_group_id %>
+
+      <%= f.label :start_date, "Дата начала" %>
+      <%= f.date_field :start_date, 
+        value: special_period.start_date || Date.current > @academic_period.end_date ? @academic_period.end_date : Date.current < @academic_period.start_date ? @academic_period.start_date : Date.current, 
+        min: @academic_period.start_date, max: @academic_period.end_date, active: !special_period.present?  %>
+
+      <%= f.submit %>
+    <% end %>
+  <% else %>
+    <%= button_to "удалить день зачетной недели", admin_special_period_path(@special_period.first.id), method: :delete %>  
+    
+    <% @special_period.each do |period| %>
+      <%= link_to period.start_date.to_s, admin_test_schedule_path(period.id), method: :get, class: "btn btn-primary" %>
+    <% end %>
+  <% end %>
+
+
+</div>
+

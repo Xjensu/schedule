@@ -1,0 +1,69 @@
+<%= link_to "Назад",  admin_faculty_student_groups_path( StudentGroup.find(params[:group_id]).faculty_id ), :class => "btn btn-primary" %>
+
+<p>Новое расписание</p>
+
+<div class="d-flex justify-content-center align-items-center md-5">
+  <%= form_for @special_period, url: admin_special_periods_path do |form| %>
+    <%= form.hidden_field :academic_period_id, value: @academic_period.id %>
+    <%= form.hidden_field :student_group_id, value: @special_period.student_group_id %>
+    <%= form.hidden_field :course, value: @special_period.course %>
+    <%= form.hidden_field :name, value: @special_period.name %>
+
+    <%= form.label :start_date %>
+    <%= form.date_field :start_date, value: @special_period.start_date || Date.current > @academic_period.end_date ? @academic_period.end_date : Date.current < @academic_period.start_date ? @academic_period.start_date : Date.current, 
+            min: @academic_period.start_date, max: @academic_period.end_date, active: !@special_period.present? %>
+
+    <%= form.submit %>
+  <% end %>
+</div>
+
+<p class="mb-3">Расписания</p>
+
+<div data-controller="exam-schedule">
+  <% @special_periods.each do |period| %>
+
+    <div class="row mb-3 md-3">
+      <div class="col-3">
+        <p>Дата: <%= period.start_date %></p>
+      </div>
+
+      <% schedule = @special_schedules.find_by(special_period_id: period.id) || @special_schedule %>
+      <div class="col card">
+        <%= form_for schedule, url: editor_admin_exams_schedules_path, method: :get, format: :turbo_stream, data: { turbo: true } do |form| %>
+          <%= form.hidden_field :special_period_id, value: period.id %>
+          <%= form.hidden_field :student_group_id, value: period.student_group_id %>
+          <%= form.hidden_field :course, value: period.course %>
+          <%= form.hidden_field :id, value: schedule.id || nil %>
+
+          <div class="row p-3">
+            <div class="col-3 align-items-center">
+              <%= form.label :start_time, "Время начала" %>
+              <%= form.select :start_time, options_for_select(@times, selected: schedule.start_time&.strftime("%H:%M")), class: "card-subtitle" %>
+            </div>
+            <div class="col">
+              <div class="row">
+                <div class="col">
+                  <% if schedule.id.present? %>
+                    <h5 class="card-title"><%= schedule.subject.name %></h5>
+                    <h6 class="card-subtitle mb-2 text-muted"><%= schedule.classroom.name %></h6>
+                    <p class="card-text"><%= schedule.teacher.post %><%= schedule.teacher.full_name %></p>
+                  <% else %>
+                    Нет расписания
+                  <% end %>
+                </div>
+                <div class="col-3">
+                  <%= form.submit "Редактировать", data: { action: "click->exam-schedule#select" } %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center mb-5">
+      <%= button_to "Удалить", admin_special_period_path(period.id), method: :delete %>
+    </div>
+  <% end %>
+</div>
+
+<%= render 'shared/schedule/offcanvas' %>

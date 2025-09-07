@@ -68,3 +68,6 @@ application.register("lecture-schedule-cards", LectureScheduleCardsController)
 
 import TestScheduleCardsController from "./schedule/test_schedule/test_schedule_cards"
 application.register("test-schedule-cards", TestScheduleCardsController)
+
+import ExamScheduleController from "./schedule/exam/exam_schedule_controller"
+application.register("exam-schedule", ExamScheduleController)

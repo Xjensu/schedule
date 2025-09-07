@@ -17,7 +17,6 @@ class AcademicPeriodDestroyJob
     ActiveRecord::Base.transaction do
       cleanup_added_schedules(period_id)
       cleanup_deleted_schedules(period_id)
-      cleanup_special_schedules(period_id)
       cleanup_special_periods(period_id)
       cleanup_schedules(period_id)
 
@@ -34,13 +33,9 @@ class AcademicPeriodDestroyJob
   private
 
   def cleanup_special_periods(academic_period_id)
-    SpecialPeriod.where(academic_period_id: academic_period_id).delete_all
-  end
-
-  def cleanup_special_schedules(academic_period_id)
-    SpecialSchedule.joins(:special_period)
-                  .where(special_periods: { academic_period_id: academic_period_id })
-                  .delete_all
+    SpecialPeriod.where(academic_period_id: academic_period_id).each do |schedule|
+      schedule.destroy
+    end
   end
 
   def cleanup_schedules(academic_period_id)

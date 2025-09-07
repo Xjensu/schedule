@@ -11,6 +11,7 @@
       <%= f.hidden_field :academic_period_id, value: special_period.academic_period_id %>
       <%= f.hidden_field :course, value: special_period.course %>
       <%= f.hidden_field :student_group_id, value: special_period.student_group_id %>
+      <%= f.hidden_field :name, value: :test%>
 
       <%= f.label :start_date, "Дата начала" %>
       <%= f.date_field :start_date, 

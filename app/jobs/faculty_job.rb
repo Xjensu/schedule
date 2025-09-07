@@ -11,7 +11,6 @@ class FacultyJob < ApplicationJob
     StudentGroup.where(faculty_id: faculty_id).find_each do |group|
       
       COURSES.each do |course|
-        schedules = []
         cache_key = "schedules_for_group:#{group.id}_course:#{course}"
         schedules = (0..1).map do |offset|
           { 

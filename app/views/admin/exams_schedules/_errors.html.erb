@@ -1,0 +1,12 @@
+<%= turbo_frame_tag "errors" do %>
+  <% if schedule.errors.any? %>
+    <div class="alert alert-danger">
+      <h5><%= pluralize(schedule.errors.count, "error") %> prohibited this schedule from being saved:</h5>
+      <ul>
+        <% schedule.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+<% end %>

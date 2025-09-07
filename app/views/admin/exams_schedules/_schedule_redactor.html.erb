@@ -1,0 +1,41 @@
+<%= turbo_frame_tag "schedule_editor" do %>
+  <% if schedule.id.present? %>
+    <% url = admin_exams_schedule_path(schedule.id) %>
+    <% method = :patch  %>
+  <% else %>
+    <% url = admin_exams_schedules_path %>
+    <% method = :post %>
+  <% end %>
+
+  <%= render 'errors', schedule: schedule %>
+
+  <%= form_with model: schedule, url: url, method: method, data: { controller: "teacher-selection classroom-selection" } do |f| %>
+    <%= f.hidden_field :teacher_id, value: schedule.teacher_id, data: { teacher_selection_target: "hiddenField" } %>
+    <%= f.hidden_field :special_period_id, value: special_period_id %>
+    <%= f.hidden_field :student_group_id, value: student_group_id %>
+    <%= f.hidden_field :start_time, value: time %>
+    <%= f.hidden_field :classroom_id, value: schedule.classroom_id || nil , data: { classroom_selection_target: "hiddenField" } %>
+    <%= f.hidden_field :lesson_id, value: lesson_id%>
+    <%= f.hidden_field :course, value: course %>
+
+    <% if schedule.id.present? %>
+      <h4>Редактирование расписания</h4>
+    <% else %>
+      <h4>Новое расписание</h4>
+    <% end %>
+
+    <%= render partial: "teachers", locals: { teachers: @teachers, selected_teacher: schedule.teacher } %>
+
+    <%= render partial: "classrooms", locals: { classrooms: @classrooms, schedule: schedule } %>
+
+    <%= f.label :subject_id, "Предмет", class: "form-label" %>
+    <%= f.text_field :subject_id, class: "form-control", value: schedule&.subject&.name || nil %>
+
+    <div class="mt-3">
+      <%= f.submit "Сохранить", class: "btn btn-primary" %>
+      <% if schedule.id.present? %>
+        <%= link_to "Удалить", admin_exams_schedule_path(schedule.id), method: :delete, data: { turbo_method: :delete, turbo_confirm: "Вы уверены?" }, class: "btn btn-danger" %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

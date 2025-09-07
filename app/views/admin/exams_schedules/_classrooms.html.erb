@@ -1,0 +1,19 @@
+<div class="row gx-4 mb-2">
+  <div class="col">
+    <h5>Аудитории</h5>
+  </div>
+  <div class="col">
+    <%= link_to "Больше", admin_classrooms_path, class: "btn btn-secondary", data: { turbo: false } %>
+  </div>
+  </div>
+
+  <%= render 'shared/classroom_search', target: 'schedule_classrooms' %>
+
+  <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc;">
+    <%= turbo_frame_tag "schedule_classrooms" do %>
+      <div class="list-group">
+        <%= render partial: 'classroom', collection: @classrooms, as: :classroom, locals: { schedule: @schedule } %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -56,7 +56,7 @@ class Admin::TestSchedulesController < ApplicationController
     if @special_schedule.save
       redirect_back fallback_location: root_path, notice: "Сообщение об успехе", allow_other_host: false
     else
-      redirect_back fallback_location: root_path, notice: "ошибка при создании, #{@special_period.errors.full_messages}", allow_other_host: false
+      redirect_back fallback_location: root_path, notice: "ошибка при создании, #{@special_schedule.errors.full_messages}", allow_other_host: false
     end
   end
 
@@ -69,7 +69,7 @@ class Admin::TestSchedulesController < ApplicationController
     if @special_schedule.update( update_params.merge( subject_id: find_or_create_subject(create_params[:subject_id]) ))
       redirect_back fallback_location: root_path, notice: "Сообщение об успехе", allow_other_host: false
     else
-      redirect_back fallback_location: root_path, notice: "ошибка при обновлении, #{@special_period.errors.full_messages}", allow_other_host: false
+      redirect_back fallback_location: root_path, notice: "ошибка при обновлении, #{@special_schedule.errors.full_messages}", allow_other_host: false
     end
   end
 
@@ -78,7 +78,7 @@ class Admin::TestSchedulesController < ApplicationController
     if @special_schedule.destroy
       redirect_back fallback_location: root_path, notice: "Сообщение об успехе", allow_other_host: false
     else
-      redirect_back fallback_location: root_path, notice: "ошибка при удалении, #{@special_period.errors.full_messages}", allow_other_host: false
+      redirect_back fallback_location: root_path, notice: "ошибка при удалении, #{@special_schedule.errors.full_messages}", allow_other_host: false
     end
   end
 

@@ -25,6 +25,26 @@ class FacultyJob < ApplicationJob
           }
         end.to_a
         Rails.cache.write(cache_key, schedules, expires_in: 25.hours)
+
+        exam_schedules = SpecialSchedule.where(special_period_id: SpecialPeriod.where(student_group_id: group.id, course: course, name: :exam).ids)
+        test_schedules = SpecialSchedule.where(special_period_id: SpecialPeriod.where(student_group_id: group.id, course: course, name: :test).ids)
+        lecture_schedules = SpecialSchedule.where(special_period_id: SpecialPeriod.where(student_group_id: group.id, course: course, name: :lecture).ids)
+
+        [:exam, :test, :lecture].each do |type|
+          schedule = instance_eval("#{type}_schedules")
+          schedule = schedule.as_json( except: [:created_at, :updated_at], 
+            include: {
+              teacher: { only: [:name, :surname, :patronymic] },
+              subject: { only: [:name] },
+              classroom: { only: [:name] },
+              lesson: { only: [:lesson_type] }
+            }
+          )
+          if schedule.exists?
+            Rails.cache.write("#{type}_schedule:group:#{group.id}:course:#{course}", schedule, expires_in: 25.hours)
+          end
+        end
+
       end
     end
   end

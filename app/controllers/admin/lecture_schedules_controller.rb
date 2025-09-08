@@ -10,10 +10,12 @@ class Admin::LectureSchedulesController < ApplicationController
   before_action :process_subject, only: [:create, :update]
 
   def index
+    @daily_schedules.each do |schedule|
+      puts schedule.attributes
+    end
     respond_to do |format|
       format.html
       format.turbo_stream do
-        
         render turbo_stream: [
           turbo_stream.update('schedule-list', partial: 'daily_schedule', locals: { schedules: @daily_schedules, selected_day: @selected_day, student_group_id: @group, course: @course }),
           turbo_stream.update_all(".period-btn", partial: 'special_period_info', collection: @periods, as: :period)
@@ -27,6 +29,11 @@ class Admin::LectureSchedulesController < ApplicationController
 
   def create
     @schedule = SpecialSchedule.create(craete_params.merge(subject_id: @subject.id))
+    if @schedule.save
+      redirect_back fallback_location: root_path, notice: "Сообщение об успехе", allow_other_host: false
+    else
+      redirect_back fallback_location: root_path, notice: "ошибка при создании, #{@schedule.errors.full_messages}", allow_other_host: false
+    end
   end
 
   def edit
@@ -34,10 +41,20 @@ class Admin::LectureSchedulesController < ApplicationController
 
   def update
     @schedule = SpecialSchedule.find(params[:id])
-    @schedule.update( craete_params.merge(subject_id: @subject.id) )
+    if @schedule.update( craete_params.merge(subject_id: @subject.id) )
+      redirect_back fallback_location: root_path, notice: "Сообщение об успехе", allow_other_host: false
+    else
+      redirect_back fallback_location: root_path, notice: "ошибка при обновлении, #{@schedule.errors.full_messages}", allow_other_host: false
+    end
   end
 
   def destroy
+    @schedule = SpecialSchedule.find(params[:id])
+    if @schedule.destroy
+      redirect_back fallback_location: root_path, notice: "Сообщение об успехе", allow_other_host: false
+    else
+      redirect_back fallback_location: root_path, notice: "ошибка при обновлении, #{@schedule.errors.full_messages}", allow_other_host: false
+    end
   end
 
   def editor
@@ -53,7 +70,7 @@ class Admin::LectureSchedulesController < ApplicationController
     @periods = 7.times.map do |i|
        SpecialPeriodManager.find_or_create_lecture_period( @academic_period_id, @group, @course, @academic_period.start_date + i.days )
     end.compact
-    @special_period_id = params[:special_period_id].present? ? params[:special_period_id].to_i : SpecialPeriod.find_by(academic_period_id: @academic_period_id).id
+    @special_period_id = params[:special_period_id].present? ? params[:special_period_id].to_i : SpecialPeriod.find_by(academic_period_id: @academic_period_id, name: :lecture).id
   end
 
   def set_resources

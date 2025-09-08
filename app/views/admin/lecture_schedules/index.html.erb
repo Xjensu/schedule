@@ -1,5 +1,7 @@
 Лекционная неделя
 
+<%= link_to "Назад",  admin_faculty_student_groups_path( StudentGroup.find(params[:group_id]).faculty_id ), :class => "btn btn-primary" %>
+
 <div class="container-fluid">
   <div class="row m-5" id="period-list">
     <%= render partial: 'special_period_info', collection: @periods, as: :period %>

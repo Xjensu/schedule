@@ -19,7 +19,6 @@ class SpecialPeriodFactory
 
 
   def self.create_period(academic_period_id, student_group_id, course, date, type)
-    name = "#{type}_period"
-    @period = SpecialPeriod.create(academic_period_id: academic_period_id, student_group_id: student_group_id, course: course, start_date: date, name: name)
+    @period = SpecialPeriod.create(academic_period_id: academic_period_id, student_group_id: student_group_id, course: course, start_date: date, name: type)
   end
 end

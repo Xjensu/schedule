@@ -2,7 +2,7 @@
   <div class="row" data-controller="lecture-schedule-cards">
     <% ['8:30', '10:10', '11:45', '14:00', '15:35', '17:10', '18:45'].each do |time| %>
       <% 
-        schedule = schedules.find_by(start_time: time)
+        schedule = schedules.find_by(start_time: Time.zone.parse(time) )
       %>
 
       <div class="col-md-2">
@@ -19,7 +19,8 @@
             <p class="card-text">
               <% if schedule.present? %>
                 <div>
-                  <%= schedule.attributes %>
+                  <%= schedule.subject&.name %> <%= schedule.classroom&.name %><br>
+                  <%= schedule.teacher&.post %> <%= schedule.teacher&.full_name %>
                 </div>
               <% else %>
                 <div>

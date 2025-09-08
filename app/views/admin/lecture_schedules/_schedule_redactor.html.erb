@@ -12,9 +12,6 @@
   <%= form.hidden_field :student_group_id, value: student_group_id %>
   <%= form.hidden_field :lesson_id, value: @lesson %>
   <%= form.hidden_field :start_time, value: @start_time %>
-
-  <%= schedule.attributes %>
-
   <%= render partial: 'teachers', locals: { teachers: @teachers, form: form, teacher_id: @teacher} %>
 
   <%= render partial: 'classrooms', locals: { classrooms: @classrooms, schedule: schedule } %>
@@ -22,5 +19,10 @@
   <%= form.label :subject_id, "Предмет", class: "form-label" %>
   <%= form.text_field :subject_name, class: "form-control", value: schedule&.subject&.name || nil %>
 
-  <%= form.submit "Save", class: "btn btn-primary" %>
+  <div class="mt-3">
+    <%= form.submit "Сохранить", class: "btn btn-primary" %>
+    <% if schedule.id.present? %>
+      <%= link_to "Удалить", admin_lecture_schedule_path(schedule.id), method: :delete, data: { turbo_method: :delete, turbo_confirm: "Вы уверены?" }, class: "btn btn-danger" %>
+    <% end %>
+  </div>
 <% end %>

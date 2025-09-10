@@ -1,6 +1,6 @@
 class Admin::TransferSchedulesController < Admin::BaseAdminController
   before_action :load_academic_period, only: [:index]
-
+  # TODO пофиксить баг с отображением расписания
   def index
     @source_date = get_current_date_else( params[:source_date] || Date.current )
     @target_date = get_current_date_else( params[:target_date] || Date.current ) 

@@ -20,7 +20,7 @@ class FacultyJob < ApplicationJob
               schedule= ScheduleGeter.new(param)
               schedule.set_schedule_for_date(date.to_s)
               schedules = schedule.get_schedule
-              period.present? ? { date: date, schedule: schedule } : nil
+              period.present? ? { date: date, schedule: schedules } : nil
             end.to_a.compact
           }
         end.to_a
@@ -40,7 +40,7 @@ class FacultyJob < ApplicationJob
               lesson: { only: [:lesson_type] }
             }
           )
-          if schedule.exists?
+          if schedule.present?
             Rails.cache.write("#{type}_schedule:group:#{group.id}:course:#{course}", schedule, expires_in: 25.hours)
           end
         end

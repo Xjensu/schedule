@@ -56,4 +56,9 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
   root "home#index"
+  post "keys", to: "home#keys"
+
+  resources :faculties, only: [:index, :show]
+
+  get "student_schedule/index"
 end

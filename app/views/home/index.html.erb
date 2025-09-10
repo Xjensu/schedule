@@ -1,1 +1,15 @@
-ОСНОВНАЯ СТРАНИЦА
+<div class="d-flex justify-content-center align-items-center">
+  Поиск по преподавателям
+</div>
+
+Факультеты
+
+<div class="container-fluid">
+  <% @faculties.each do |faculty| %>
+    <div class="mb-3 row">
+      <%= link_to faculty_path(faculty.id), class: "text-decoration-none" do %>
+        <p class="card p-3" ><%= faculty.full_name %></p>
+      <% end %>
+    </div>
+  <% end %>
+</div>

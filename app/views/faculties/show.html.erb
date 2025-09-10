@@ -1,0 +1,25 @@
+<%= link_to "Назад", :root, class: "btn btn-secondary mb-3" %>
+
+<%= form_with url: student_schedule_index_path, method: :get, class: "row g-3" do |form| %>
+  <% selected_group_id = @groups.any? ? @groups.first.id : nil %>
+  
+  <div class="col-md-6">
+    <%= form.label :group_id, "Группа:", class: "form-label" %>
+    <%= form.select :group_id, 
+          options_from_collection_for_select(@groups, :id, :group_name, selected_group_id),
+          { },
+          { class: "form-select", required: true } %>
+  </div>
+
+  <div class="col-md-6">
+    <%= form.label :course, "Курс:", class: "form-label" %>
+    <%= form.select :course, 
+          options_for_select([1, 2, 3, 4, 5], params[:course] || 1),
+          {},
+          { class: "form-select", required: true } %>
+  </div>
+
+  <div class="col-12">
+    <%= form.submit "Показать расписание", class: "btn btn-primary" %>
+  </div>
+<% end %>

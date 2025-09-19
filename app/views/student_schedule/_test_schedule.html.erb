@@ -1,0 +1,47 @@
+<div class="container">
+  <% days.each_with_index do |day, i| %>
+    <div class="mb-3 text-center">
+      <%= day %>
+    </div>
+    <% times.each do |time| %>
+      <div class="row mb-2">
+        <div class="col-2">
+          <%= time %>
+        </div>
+        <div class="col-10">
+          <% filtered_schedule = schedules.select do |schedule| %>
+            <% time_part = schedule["start_time"].split("T")[1].split(":")[0..1].join(":") %>
+            <% time_matches = time_part == time %>
+            <% start_date_str = schedule["special_period"]["start_date"] %>
+            <% weekday_num = Date.parse(start_date_str).wday %>
+            <% day_matches = weekday_num == (i + 1) %>
+            <% time_matches && day_matches %>
+          <% end %>
+          <div class="card">
+            <div class="card-body">
+              <% if filtered_schedule.present? %>
+                <% filtered_schedule = filtered_schedule[0] %>
+                <h6 class="card-title">
+                  <%= filtered_schedule["subject"]["name"] %>
+                </h6>
+                <div class="row">
+                  <div class="col-8">
+                    <small class="text-truncate d-block"><%= filtered_schedule["teacher"]["surname"] %> <%= filtered_schedule["teacher"]["name"][0] %>. <%= filtered_schedule["teacher"]["patronymic"][0] %>.</small>
+                  </div>
+                  <div class="col-4">
+                    <small class="text-muted d-block text-end"><%= filtered_schedule["classroom"]["name"] %></small>
+                  </div>
+                </div>
+              <% else %>
+                <div class="text-center text-muted">
+                  —
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <br>
+  <% end %>
+</div>

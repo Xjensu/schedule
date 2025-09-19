@@ -17,8 +17,8 @@ class TeacherScheduleJob
         }
       end.to_a
       Rails.cache.write(cache_key, schedules, expires_in: 25.hours)
-      puts "SUCCES"
     end
+    Rails.cache.write("all_teachers", Teacher.all, expires_in: 25.hours)
     puts "PRFORMING IN TEACHRSCHEDULEJOB"
   end
 end

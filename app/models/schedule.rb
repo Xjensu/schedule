@@ -9,8 +9,6 @@ class Schedule < ApplicationRecord
   validates :academic_period, presence: true
   validates :student_group, presence: true
   validates :subject, presence: true
-  validates :teacher, presence: true
-  validates :classroom, presence: true
   validates :lesson, presence: true
   validates :day_of_week, presence: true
   validates :start_time, presence: true

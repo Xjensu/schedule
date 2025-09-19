@@ -14,7 +14,7 @@ class FacultyJob < ApplicationJob
         cache_key = "schedules_for_group:#{group.id}_course:#{course}"
         schedules = (0..1).map do |offset|
           { 
-            week: offset, dates: @dates[offset][:dates].lazy.map do |date|
+            week: offset, under: !@dates[offset][:dates][0].cweek.even?, dates: @dates[offset][:dates].lazy.map do |date|
               period = academic_period_matcher.find_period_id(date)
               param = { student_group_id: group.id, course: course, academic_period_id: period }
               schedule= ScheduleGeter.new(param)
@@ -26,7 +26,7 @@ class FacultyJob < ApplicationJob
         end.to_a
         Rails.cache.write(cache_key, schedules, expires_in: 25.hours)
 
-        exam_schedules = SpecialSchedule.where(special_period_id: SpecialPeriod.where(student_group_id: group.id, course: course, name: :exam).ids)
+        exam_schedules = SpecialSchedule.joins(:special_period).where(special_period_id: SpecialPeriod.where(student_group_id: 1, course: 1, name: :exam).ids).order('special_periods.start_date ASC')
         test_schedules = SpecialSchedule.where(special_period_id: SpecialPeriod.where(student_group_id: group.id, course: course, name: :test).ids)
         lecture_schedules = SpecialSchedule.where(special_period_id: SpecialPeriod.where(student_group_id: group.id, course: course, name: :lecture).ids)
 
@@ -37,7 +37,8 @@ class FacultyJob < ApplicationJob
               teacher: { only: [:name, :surname, :patronymic] },
               subject: { only: [:name] },
               classroom: { only: [:name] },
-              lesson: { only: [:lesson_type] }
+              lesson: { only: [:lesson_type] },
+              special_period: { only: [:start_date] }
             }
           )
           if schedule.present?

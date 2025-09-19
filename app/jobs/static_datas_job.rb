@@ -4,7 +4,7 @@ class StaticDatasJob
 
   def perform
     faculties_cache_key = "all_faculties"
-    @faculties = Faculty.all.to_a
+    @faculties = Faculty.order(:full_name).to_a
     Rails.cache.write(faculties_cache_key, @faculties.to_a)
     @faculties.each do |faculty|
       cache_key = "faculty:#{faculty.id}_groups"

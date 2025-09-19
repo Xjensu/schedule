@@ -1,0 +1,24 @@
+<div class="container">
+  <% schedules.each do |schedule| %>
+    <div class="mb-3">
+      <div class="mb-3 text-center">
+        <%= Date.parse(schedule["special_period"]["start_date"]).strftime('%d.%m') %>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">
+            <%= schedule["subject"]["name"] %> 
+          </h6>
+          <div class="row">
+            <div class="col-8">
+              <small class="text-truncate d-block"><%= schedule["teacher"]["surname"] %> <%= schedule["teacher"]["name"][0] %>. <%= schedule["teacher"]["patronymic"][0] %>.</small>
+            </div>
+            <div class="col-4">
+              <small class="text-muted d-block text-end"><%= schedule["classroom"]["name"] %></small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

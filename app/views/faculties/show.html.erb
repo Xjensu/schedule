@@ -1,25 +1,68 @@
-<%= link_to "Назад", :root, class: "btn btn-secondary mb-3" %>
+<% if @groups.present? %>
+  <%= form_with url: faculty_path(@faculty_id), method: :get, class: "row g-3", data: { controller: "schedule-selector", action: "change->schedule-selector#change" } do |form| %>
 
-<%= form_with url: student_schedule_index_path, method: :get, class: "row g-3" do |form| %>
-  <% selected_group_id = @groups.any? ? @groups.first.id : nil %>
-  
-  <div class="col-md-6">
-    <%= form.label :group_id, "Группа:", class: "form-label" %>
-    <%= form.select :group_id, 
-          options_from_collection_for_select(@groups, :id, :group_name, selected_group_id),
-          { },
-          { class: "form-select", required: true } %>
+    <!-- Группа -->
+    <div class="col-12 col-sm-6 mb-3">
+      <%= form.label :group_id, "Группа:", class: "form-label fw-medium" %>
+      <%= form.select :group_id,
+            options_from_collection_for_select(@groups, :id, :group_name, @selected_group_id),
+            { prompt: "Выберите группу" },
+            { class: "form-select form-control-lg", required: true, "aria-required": "true", data: { schedule_selector_target: "select" } } %>
+    </div>
+
+    <!-- Курс -->
+    <div class="col-12 col-sm-6 mb-3">
+      <%= form.label :course, "Курс:", class: "form-label fw-medium" %>
+      <%= form.select :course,
+            options_for_select((1..5).to_a, @selected_course),
+            { prompt: "Выберите курс" },
+            { class: "form-select form-control-lg", required: true, "aria-required": "true", data: { schedule_selector_target: "select" } } %>
+    </div>
+
+    <%= form.hidden_field :id, value: @faculty_id %>
+
+  <% end %>
+
+  <!-- Кнопки расписания -->
+  <div class="mt-4">
+    <!-- Основное расписание -->
+    <%= form_with url: student_schedule_index_path, method: :get, class: "mb-3 w-100" do |form| %>
+      <%= form.hidden_field :group_id, value: @selected_group_id %>
+      <%= form.hidden_field :course, value: @selected_course %>
+      <%= form.submit "Основное расписание", class: "btn btn-primary w-100 btn-lg" %>
+    <% end %>
+
+    <!-- Дополнительные кнопки (лекции, зачеты, экзамены) -->
+    <div class="d-flex flex-wrap gap-2 mt-3">
+      <% if @exist_lecture %>
+        <%= form_with url: student_schedule_index_path, method: :get, class: "flex-grow-1" do |form| %>
+          <%= form.hidden_field :group_id, value: @selected_group_id %>
+          <%= form.hidden_field :course, value: @selected_course %>
+          <%= form.hidden_field :schedule_type, value: "lecture" %>
+          <%= form.submit "Лекционная неделя", class: "btn btn-success btn-sm w-100" %>
+        <% end %>
+      <% end %>
+
+      <% if @exist_test %>
+        <%= form_with url: student_schedule_index_path, method: :get, class: "flex-grow-1" do |form| %>
+          <%= form.hidden_field :group_id, value: @selected_group_id %>
+          <%= form.hidden_field :course, value: @selected_course %>
+          <%= form.hidden_field :schedule_type, value: "test" %>
+          <%= form.submit "Зачетная неделя", class: "btn btn-warning btn-sm w-100" %>
+        <% end %>
+      <% end %>
+
+      <% if @exist_exams %>
+        <%= form_with url: student_schedule_index_path, method: :get, class: "flex-grow-1" do |form| %>
+          <%= form.hidden_field :group_id, value: @selected_group_id %>
+          <%= form.hidden_field :course, value: @selected_course %>
+          <%= form.hidden_field :schedule_type, value: "exam" %>
+          <%= form.submit "Экзамены", class: "btn btn-warning btn-sm w-100" %>
+        <% end %>
+      <% end %>
+    </div>
   </div>
 
-  <div class="col-md-6">
-    <%= form.label :course, "Курс:", class: "form-label" %>
-    <%= form.select :course, 
-          options_for_select([1, 2, 3, 4, 5], params[:course] || 1),
-          {},
-          { class: "form-select", required: true } %>
-  </div>
-
-  <div class="col-12">
-    <%= form.submit "Показать расписание", class: "btn btn-primary" %>
-  </div>
+<% else %>
+  <div class="alert alert-info mt-4">Нет данных о группах.</div>
 <% end %>

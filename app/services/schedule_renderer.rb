@@ -8,7 +8,7 @@ class ScheduleRenderer
   end
 
   def render
-    @view.render partial: @options[:partial], locals: {
+    ApplicationController.renderer.render partial: @options[:partial], locals: {
       default_times: @options[:default_times] || ['08:30', '10:10', '11:45', '14:00', '15:35', '17:10', '18:45'],
       param: @options[:param],
       schedules: @options[:schedules],
@@ -22,8 +22,7 @@ class ScheduleRenderer
 
   def default_card_stimulus
     { 
-      controller: 'default-schedule', 
-      action: 'click->default-schedule#select' 
+      controller: 'default-schedule', action: 'click->default-schedule#select' 
     }
   end
 end

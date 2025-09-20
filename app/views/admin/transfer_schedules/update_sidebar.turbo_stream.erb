@@ -1,15 +1,29 @@
+
+<% @datas_source.each do |k,v| %>
+  <%= turbo_stream.prepend "transfers_#{@source}" do %>
+    <%= render partial: 'change_card', locals: { change: v, method: k.to_s, target: "#{@source}" } %>
+  <% end %>
+<% end %>
+
+<% @datas_target.each do |k,v| %>
+  <%= turbo_stream.prepend "transfers_#{@target}" do %>
+    <%= render partial: 'change_card', locals: { change: v, method: k.to_s, target: "#{@target}" } %>
+  <% end %>
+<% end %>
+
+
 <% if @datas_source.present? %>
-  <% @datas_source.each do |k,v| %>
-    <%= turbo_stream.prepend "#{@source}_#{k}" do %>
-      <%= render partial: 'change_card', locals: { change: v, method: k.to_s, target: "#{@source}" } %>
+  <%= turbo_stream.replace @dataset[:source] do %>
+    <%= turbo_frame_tag @dataset[:source] do %>
+      <%= @schedule_renderer_source.render %>
     <% end %>
   <% end %>
 <% end %>
 
-<% if @datas_target.present? %>
-  <% @datas_target.each do |k,v| %>
-    <%= turbo_stream.prepend "#{@target}_#{k}" do %>
-      <%= render partial: 'change_card', locals: { change: v, method: k.to_s, target: "#{@target}" } %>
+<% if @target != @source && @target.present? %>
+  <%= turbo_stream.replace @dataset[:target] do %>
+    <%= turbo_frame_tag @dataset[:target] do %>
+      <%= @schedule_renderer_target.render %>
     <% end %>
   <% end %>
 <% end %>

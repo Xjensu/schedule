@@ -33,18 +33,55 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
 
   def update_sidebar
     @dataset = params[:dataset]
-    @target = "transfers_#{@dataset[:target]}"
-    @source = "transfers_#{@dataset[:source]}"
+    @target = "#{@dataset[:target]}"
+    @source = "#{@dataset[:source]}"
+    puts "aAKSKD", @target == @source
 
     @datas_source = {}
     @datas_target = {}
 
     process_changes_for_sidebar @dataset
 
-    puts @source
-    puts "SOURCE", @datas_source
-    puts @target
-    puts "TARGET", @datas_target
+    param = { 
+      student_group_id: @dataset[:group_id], 
+      course: @dataset[:course], 
+      academic_period_id: @dataset[:academic_period_id] 
+    }
+
+    @schedules = ScheduleGeter.new(param)
+
+    if @target.present?
+      @schedules.set_schedule_for_date(@dataset[:target_date])
+      @changes_target = @schedules.changes
+      @schedules_target = @schedules.get_schedule
+    end
+
+    @schedules.set_schedule_for_date(@dataset[:source_date])
+    @changes_source = @schedules.changes
+    @schedules_source = @schedules.get_schedule
+    @default_times = ['08:30', '10:10', '11:45', '14:00', '15:35', '17:10', '18:45']
+
+    if @target.present?
+      @schedule_renderer_target = ScheduleRenderer.new(
+        self,
+        default_times: @default_times,
+        schedules: @schedules_target,
+        param: { group_id: @dataset[:group_id], academic_period_id: @dataset[:academic_period_id], course: @dataset[:course], date: @dataset[:target_date] },
+        card_stimulus: { controller: 'transfer-schedule-card', action: 'dragstart->transfer-schedule-card#handleDragStart' },
+        card_attributes: { draggable: 'true', transfer_schedule_card_target: @dataset[:target] },
+        partial: 'shared/schedule/transfer_schedule_container'
+      )
+    end
+
+    @schedule_renderer_source = ScheduleRenderer.new(
+      self,
+      default_times: @default_times,
+      schedules: @schedules_source,
+      param: { group_id: @dataset[:group_id], academic_period_id: @dataset[:academic_period_id], course: @dataset[:course], date: @dataset[:target_date] },
+      card_stimulus: { controller: 'transfer-schedule-card', action: 'dragstart->transfer-schedule-card#handleDragStart' },
+      card_attributes: { draggable: 'true', transfer_schedule_card_target: @dataset[:target] },
+      partial: 'shared/schedule/transfer_schedule_container'
+    )
 
     respond_to do |format|
       if @dataset[:source_schedule_id].present? || @dataset[:target_schedule_id].present? || ( @dataset[:target_schedule_id].present? && @dataset[:source_schedule_id].present?)
@@ -74,8 +111,8 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
         # Сохраняем исходные данные второго предмета
         source2 = {
           schedule_id: dataset[:target_schedule_id],
-          group_id: dataset[:target_group_id] || dataset[:group_id], # если не указана, используем ту же группу
-          course: dataset[:target_course] || dataset[:course], # если не указан, используем тот же курс
+          group_id: dataset[:target_group_id] || dataset[:group_id], 
+          course: dataset[:target_course] || dataset[:course],
           date: dataset[:target_date],
           time: dataset[:target_time]
         }

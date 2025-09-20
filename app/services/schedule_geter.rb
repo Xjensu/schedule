@@ -5,7 +5,7 @@ class ScheduleGeter
   end
 
   def set_schedule_for_date(day_string)
-    date = Date.parse(day_string)
+    date = day_string.to_date
     day_of_week = date.wday.to_s
     under = even_odd_week(date.cweek)
     

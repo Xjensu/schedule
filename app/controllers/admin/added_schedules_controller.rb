@@ -16,6 +16,27 @@ class Admin::AddedSchedulesController < Admin::BaseAdminController
     service = AddedScheduleService.new( id: @added.id )
     respond_to do |format|
       if service.destroy
+        param = {
+          student_group_id: @added.student_group_id,
+          course: @added.course,
+          academic_period_id: @added.schedule.academic_period_id
+        }
+
+        schedules = ScheduleGeter.new(param)
+        schedules.set_schedule_for_date(@added.date.to_s)
+        @schedules = schedules.get_schedule
+        @default_times = ['08:30', '10:10', '11:45', '14:00', '15:35', '17:10', '18:45']
+
+        @schedule_renderer = ScheduleRenderer.new(
+          self,
+          default_times: @default_times,
+          schedules: @schedules,
+          param: { group_id: @added.student_group_id, academic_period_id: @added.schedule.academic_period_id, course: @added.course, date: @added.date },
+          card_stimulus: { controller: 'transfer-schedule-card', action: 'dragstart->transfer-schedule-card#handleDragStart' },
+          card_attributes: { draggable: 'true', transfer_schedule_card_target: @target },
+          partial: 'shared/schedule/transfer_schedule_container'
+        )
+
         format.turbo_stream
       else
         puts "net"

@@ -1,1 +1,7 @@
 <%= turbo_stream.remove "transfers_#{@target}_#{@added.id}"%>
+
+<%= turbo_stream.replace @target do %>
+  <%= turbo_frame_tag @target do %>
+    <%= @schedule_renderer.render %>
+  <% end %>
+<% end %>

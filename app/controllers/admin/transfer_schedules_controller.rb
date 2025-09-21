@@ -35,7 +35,6 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
     @dataset = params[:dataset]
     @target = "#{@dataset[:target]}"
     @source = "#{@dataset[:source]}"
-    puts "aAKSKD", @target == @source
 
     @datas_source = {}
     @datas_target = {}
@@ -95,7 +94,6 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
   private
 
   def process_changes_for_sidebar(dataset)
-    puts dataset
 
     case dataset[:operation]
       when 'replace' 
@@ -112,7 +110,7 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
         source2 = {
           schedule_id: dataset[:target_schedule_id],
           group_id: dataset[:target_group_id] || dataset[:group_id], 
-          course: dataset[:target_course] || dataset[:course],
+          course: dataset[:course],
           date: dataset[:target_date],
           time: dataset[:target_time]
         }
@@ -140,8 +138,6 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
       when 'delete'
         delete_schedule( dataset[:source_schedule_id], dataset[:group_id], dataset[:course] , dataset[:source_date] )
         @datas_source[:delete] = @deleted
-      else
-        puts "UNKNOWN"
       end
   end
 
@@ -165,7 +161,7 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
     if @added.save
       puts "ADDED"
     else
-      puts "ERROR", @added.errors.full_messages
+      puts "ERROR"
     end
   end
 

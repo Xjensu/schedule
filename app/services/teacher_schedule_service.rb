@@ -80,7 +80,8 @@ class TeacherScheduleService
           lesson_id: original_schedule.lesson_id,
           day_of_week: @day_of_week,
           under: @under,
-          start_time: added.time || original_schedule.start_time
+          start_time: added.time || original_schedule.start_time,
+          course: original_schedule.course
         )
         
         modified_schedule.define_singleton_method(:original_id) { original_schedule.id }

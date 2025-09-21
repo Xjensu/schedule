@@ -1,0 +1,63 @@
+<% schedules.each do |schedule| %>
+  <div class="flex-shrink-0 w-96 rounded-3 p-3">
+    <div class="mb-3 text-center">
+      <% if schedule[:week] == 0 %>
+        <span>Текущая неделя</span>
+      <% else %>
+        <span>Следующая неделя</span>
+      <% end %>
+      -
+      <% if !schedule[:under] %>
+        <strong class="text-muted">Под чертой</strong>
+      <% else %>
+        <strong class="text-muted">Над чертой</strong>
+      <% end %>
+    </div>
+    <% schedule[:dates].each_with_index do |dates_schedule, i| %>
+      <div class="row mb-4">
+        <div class="col-5 text-end pe-2">
+          <%= days[i] %>
+        </div>
+        <div class="col-8">
+          <% times.each do |time| %>
+            <div class="d-flex align-items-start mb-2">
+              <div class="flex-shrink-0 text-center me-2">
+                <%= time %>
+              </div>
+              <div class="flex-grow-1">
+                <% current = dates_schedule[:schedule].select { |s| s.start_time.strftime("%H:%M") == time } %>
+                <% if current.present? %>
+                  <% current.each do |schedule| %>
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title">
+                          <%= schedule.lesson.lesson_type_name %> <%= schedule.subject.name %>
+                        </h6>
+                        <div class="row g-0">
+                          <div class="col-8">
+                            <small class="text-truncate d-block"><%= schedule.student_group.group_name %>-<%= schedule.course %></small>
+                          </div>
+                          <div class="col-4">
+                            <small class="text-muted d-block text-end"><%= schedule.classroom.name %></small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <div class="card">
+                    <div class="card-body">
+                      <h6 class="card-title">
+                        —
+                      </h6>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

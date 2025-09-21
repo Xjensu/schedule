@@ -12,7 +12,7 @@ class TeacherScheduleJob
           dates: @dates[offset][:dates].lazy.map do |date|
             service = TeacherScheduleService.new(teacher.id, date).execute
             schedule = service.schedule
-            { date: date, scehdule: schedule }
+            { date: date, schedule: schedule }
           end.to_a
         }
       end.to_a

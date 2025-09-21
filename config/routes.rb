@@ -1,8 +1,9 @@
 require 'sidekiq/web'
 require 'sidekiq/cron/web'
 Rails.application.routes.draw do
-  mount ActionCable.server => '/cable'
- 
+  resources :teachers, only: [:index]
+  resources :teacher_schedules, only: [:index]
+  
   namespace :admin do 
     resources :exams_schedules, only: [:index, :create, :update, :destroy] do
       collection do

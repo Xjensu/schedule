@@ -18,6 +18,29 @@ class AcademicPeriod < ApplicationRecord
     end
   end
 
+  def self.includes_date?(date)
+    return false if date.blank?
+
+    # Приводим дату к объекту Date
+    target_date = case date
+                  when Date
+                    date
+                  when String
+                    Date.parse(date)
+                  when Time, DateTime
+                    date.to_date
+                  else
+                    begin
+                      Date.parse(date.to_s)
+                    rescue
+                      return false
+                    end
+                  end
+
+    where('start_date <= ? AND (end_date IS NULL OR end_date >= ?)', target_date, target_date)
+          .exists?
+  end
+
   private
 
   def schedule_destruction_job

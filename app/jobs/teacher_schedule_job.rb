@@ -12,8 +12,8 @@ class TeacherScheduleJob
           dates: @dates[offset][:dates].lazy.map do |date|
             service = TeacherScheduleService.new(teacher.id, date).execute
             schedule = service.schedule
-            { date: date, schedule: schedule }
-          end.to_a
+            AcademicPeriod.includes_date?(date) ? { date: date, schedule: schedule } : nil
+          end.to_a.compact
         }
       end.to_a
       Rails.cache.write(cache_key, schedules, expires_in: 25.hours)

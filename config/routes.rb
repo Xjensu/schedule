@@ -51,7 +51,9 @@ Rails.application.routes.draw do
       get 'academic_period', to: 'academic_periods#academic_period'
     end
     get '/faculties/:faculty_id/student_groups/delete', to: 'student_groups#delete', as: 'delete_student_group'
-    mount Sidekiq::Web => '/sidekiq'
+    authenticate :user, ->(user) { user.admin? } do
+      mount Sidekiq::Web => '/sidekiq'
+    end
   end
   devise_for :users
 

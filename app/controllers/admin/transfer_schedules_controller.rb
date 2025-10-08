@@ -1,89 +1,50 @@
 class Admin::TransferSchedulesController < Admin::BaseAdminController
   before_action :load_academic_period, only: [:index]
-  # TODO пофиксить баг с отображением расписания
+
   def index
-    @source_date = get_current_date_else( params[:source_date] || Date.current )
-    @target_date = get_current_date_else( params[:target_date] || Date.current ) 
+    @source_date = constrain_date_to_academic_period(params[:source_date] || Date.current)
+    @target_date = constrain_date_to_academic_period( params[:target_date] || Date.current ) 
   end
 
   def schedule_for_date
-    param = { student_group_id: params[:group_id], course: params[:course], academic_period_id: params[:academic_period_id] }
 
-    @schedules = ScheduleGeter.new(param)
-    @schedules.set_schedule_for_date(params[:date])
-    @changes = @schedules.changes
-    @schedules = @schedules.get_schedule
+    @schedules_data = ScheduleTransferService.new(
+      student_group_id: params[:group_id],
+      course: params[:course],
+      academic_period_id: params[:academic_period_id]
+    ).for_date(params[:date])
+
+    @changes = @schedules_data.changes
+    @schedules = @schedules_data.schedule
     @target = params[:target]
-    @default_times = ['08:30', '10:10', '11:45', '14:00', '15:35', '17:10', '18:45']
-    
-    @schedule_renderer = ScheduleRenderer.new(
-          self,
-          default_times: @default_times,
-          schedules: @schedules,
-          param: { group_id:  params[:group_id], academic_period_id: params[:academic_period_id], course: params[:course], date: params[:date] },
-          card_stimulus: { controller: 'transfer-schedule-card', action: 'dragstart->transfer-schedule-card#handleDragStart' },
-          card_attributes: { draggable: 'true', transfer_schedule_card_target: params[:target] },
-          partial: 'shared/schedule/transfer_schedule_container'
-        )
+    @default_times = default_schedule_times
+
+    @schedule_renderer = build_schedule_renderer(
+      schedules: @schedules,
+      date: params[:date],
+      target: @target
+    )
 
     respond_to do |format|
-      format.turbo_stream 
+      format.turbo_stream
     end
   end
 
   def update_sidebar
-    @dataset = params[:dataset]
-    @target = "#{@dataset[:target]}"
-    @source = "#{@dataset[:source]}"
+
+    @dataset = params.require(:dataset).permit!.to_h.symbolize_keys
+    @target = @dataset[:target].to_s
+    @source = @dataset[:source].to_s
 
     @datas_source = {}
     @datas_target = {}
 
-    process_changes_for_sidebar @dataset
+    process_dataset_changes
 
-    param = { 
-      student_group_id: @dataset[:group_id], 
-      course: @dataset[:course], 
-      academic_period_id: @dataset[:academic_period_id] 
-    }
-
-    @schedules = ScheduleGeter.new(param)
-
-    if @target.present?
-      @schedules.set_schedule_for_date(@dataset[:target_date])
-      @changes_target = @schedules.changes
-      @schedules_target = @schedules.get_schedule
-    end
-
-    @schedules.set_schedule_for_date(@dataset[:source_date])
-    @changes_source = @schedules.changes
-    @schedules_source = @schedules.get_schedule
-    @default_times = ['08:30', '10:10', '11:45', '14:00', '15:35', '17:10', '18:45']
-
-    if @target.present?
-      @schedule_renderer_target = ScheduleRenderer.new(
-        self,
-        default_times: @default_times,
-        schedules: @schedules_target,
-        param: { group_id: @dataset[:group_id], academic_period_id: @dataset[:academic_period_id], course: @dataset[:course], date: @dataset[:target_date] },
-        card_stimulus: { controller: 'transfer-schedule-card', action: 'dragstart->transfer-schedule-card#handleDragStart' },
-        card_attributes: { draggable: 'true', transfer_schedule_card_target: @dataset[:target] },
-        partial: 'shared/schedule/transfer_schedule_container'
-      )
-    end
-
-    @schedule_renderer_source = ScheduleRenderer.new(
-      self,
-      default_times: @default_times,
-      schedules: @schedules_source,
-      param: { group_id: @dataset[:group_id], academic_period_id: @dataset[:academic_period_id], course: @dataset[:course], date: @dataset[:target_date] },
-      card_stimulus: { controller: 'transfer-schedule-card', action: 'dragstart->transfer-schedule-card#handleDragStart' },
-      card_attributes: { draggable: 'true', transfer_schedule_card_target: @dataset[:target] },
-      partial: 'shared/schedule/transfer_schedule_container'
-    )
+    render_schedule_renderers
 
     respond_to do |format|
-      if @dataset[:source_schedule_id].present? || @dataset[:target_schedule_id].present? || ( @dataset[:target_schedule_id].present? && @dataset[:source_schedule_id].present?)
+      if valid_schedule_ids?
         format.turbo_stream
       else
         format.turbo_stream { render :schedule_id_error }
@@ -93,59 +54,125 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
 
   private
 
-  def process_changes_for_sidebar(dataset)
+  def process_dataset_changes
+    operation_handler = ScheduleOperationHandler.new(@dataset)
+    
+    operation_handler.on_replace do
+      puts "Replace"
+      source1_data = extract_schedule_data(:source)
+      source2_data = extract_schedule_data(:target)
 
-    case dataset[:operation]
-      when 'replace' 
-        # Сохраняем исходные данные первого предмета
-        source1 = {
-          schedule_id: dataset[:source_schedule_id],
-          group_id: dataset[:group_id],
-          course: dataset[:course],
-          date: dataset[:source_date],
-          time: dataset[:source_time]
-        }
-        
-        # Сохраняем исходные данные второго предмета
-        source2 = {
-          schedule_id: dataset[:target_schedule_id],
-          group_id: dataset[:target_group_id] || dataset[:group_id], 
-          course: dataset[:course],
-          date: dataset[:target_date],
-          time: dataset[:target_time]
-        }
+      delete_schedule(source1_data[:schedule_id], source1_data[:group_id], source1_data[:course], source1_data[:date])
+      @datas_source[:delete] = @deleted
 
-        # Удаляем оба предмета из их исходных позиций
-        delete_schedule(source1[:schedule_id], source1[:group_id], source1[:course], source1[:date])
-        @datas_source[:delete] = @deleted
-        
-        delete_schedule(source2[:schedule_id], source2[:group_id], source2[:course], source2[:date])
-        @datas_target[:delete] = @deleted
+      delete_schedule(source2_data[:schedule_id], source2_data[:group_id], source2_data[:course], source2_data[:date])
+      @datas_target[:delete] = @deleted
 
-        # Добавляем предметы на новые места (меняем местами)
-        add_schedule(source1[:schedule_id], source2[:date], source2[:time], source2[:group_id], source2[:course])
-        @datas_target[:add] = @added
-        
-        add_schedule(source2[:schedule_id], source1[:date], source1[:time], source1[:group_id], source1[:course])
-        @datas_source[:add] = @added
-      when 'transfer'
-        # сначала удаляем запись из source
-        delete_schedule( dataset[:source_schedule_id], dataset[:group_id], dataset[:course] , dataset[:source_date]  )
-        @datas_source[:delete] = @deleted
-        # потом добавляем запись в target
-        add_schedule( dataset[:source_schedule_id], dataset[:target_date], dataset[:target_time], dataset[:group_id], dataset[:course] )
-        @datas_target[:add] = @added
-      when 'delete'
-        delete_schedule( dataset[:source_schedule_id], dataset[:group_id], dataset[:course] , dataset[:source_date] )
-        @datas_source[:delete] = @deleted
-      end
+      add_schedule(source1_data[:schedule_id], source2_data[:date], source2_data[:time], source2_data[:group_id], source2_data[:course])
+      @datas_target[:add] = @added
+
+      add_schedule(source2_data[:schedule_id], source1_data[:date], source1_data[:time], source1_data[:group_id], source1_data[:course])
+      @datas_source[:add] = @added
+    end
+
+    operation_handler.on_transfer do
+      puts "Transfer"
+      source_data = extract_schedule_data(:source)
+      
+      delete_schedule(source_data[:schedule_id], source_data[:group_id], source_data[:course], source_data[:date])
+      @datas_source[:delete] = @deleted
+      
+      add_schedule(source_data[:schedule_id], @dataset[:target_date], @dataset[:target_time], source_data[:group_id], source_data[:course])
+      @datas_target[:add] = @added
+    end
+
+    operation_handler.on_delete do
+      puts "Delete"
+      source_data = extract_schedule_data(:source)
+      
+      delete_schedule(source_data[:schedule_id], source_data[:group_id], source_data[:course], source_data[:date])
+      @datas_source[:delete] = @deleted
+    end
+
+    operation_handler.process
   end
 
-  def processing_transfers
-
+  def extract_schedule_data(type)
+    case type
+    when :source
+      {
+        schedule_id: @dataset[:source_schedule_id],
+        group_id: @dataset[:group_id],
+        course: @dataset[:course],
+        date: @dataset[:source_date],
+        time: @dataset[:source_time]
+      }
+    when :target
+      {
+        schedule_id: @dataset[:target_schedule_id].present? ? @dataset[:target_schedule_id] : @dataset[:source_schedule_id],
+        group_id: @dataset[:target_group_id] || @dataset[:group_id],
+        course: @dataset[:course],
+        date: @dataset[:target_date],
+        time: @dataset[:target_time]
+      }
+    end
   end
 
-  def delete_schedule( schedule_id, group_id, course, date )
+  def render_schedule_renderers
+    @default_times = default_schedule_times
+
+    if @target.present?
+      @schedules_target_data = ScheduleTransferService.new(
+        student_group_id: @dataset[:group_id],
+        course: @dataset[:course],
+        academic_period_id: @dataset[:academic_period_id]
+      ).for_date(@dataset[:target_date])
+
+      @changes_target = @schedules_target_data.changes
+      @schedules_target = @schedules_target_data.schedule
+
+      @schedule_renderer_target = build_schedule_renderer(
+        schedules: @schedules_target,
+        date: @dataset[:target_date],
+        target: @dataset[:target]
+      )
+    end
+
+    @schedules_source_data = ScheduleTransferService.new(
+      student_group_id: @dataset[:group_id],
+      course: @dataset[:course],
+      academic_period_id: @dataset[:academic_period_id]
+    ).for_date(@dataset[:source_date])
+
+    @changes_source = @schedules_source_data.changes
+    @schedules_source = @schedules_source_data.schedule
+
+    @schedule_renderer_source = build_schedule_renderer(
+      schedules: @schedules_source,
+      date: @dataset[:source_date],
+      target: @dataset[:target]
+    )
+  end
+
+  def build_schedule_renderer(schedules:, date:, target:)
+    ScheduleRenderer.new(
+      self,
+      default_times: default_schedule_times,
+      schedules: schedules,
+      param: { group_id: params[:group_id] || @dataset[:group_id], academic_period_id: params[:academic_period_id] || @dataset[:academic_period_id], course: params[:course] || @dataset[:course], date: date },
+      card_stimulus: {
+        controller: 'transfer-schedule-card',
+        action: 'dragstart->transfer-schedule-card#handleDragStart'
+      },
+      card_attributes: {
+        draggable: 'true',
+        transfer_schedule_card_target: target
+      },
+      partial: 'shared/schedule/transfer_schedule_container'
+    )
+  end
+
+  def delete_schedule(schedule_id, group_id, course, date)
     service = DeletedScheduleService.new(
       schedule_id: schedule_id,
       date: date,
@@ -169,12 +196,71 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
     @academic_period = AcademicPeriod.find(params[:academic_period_id])
   end
 
-  
+  def constrain_date_to_academic_period(target_date)
+    date = Date.parse(target_date.to_s)
+    return @academic_period.start_date if date < @academic_period.start_date
+    return @academic_period.end_date if date > @academic_period.end_date
+    date
+  rescue ArgumentError
+    Date.current
+  end
 
-  def get_current_date_else(target_date)
-    date = target_date
-    if target_date.present?
-      date = target_date > @academic_period.end_date ? @academic_period.end_date : target_date < @academic_period.start_date  ? @academic_period.start_date : date
-    end
+  def valid_schedule_ids?
+    @dataset[:source_schedule_id].present? || @dataset[:target_schedule_id].present?
+  end
+
+  def default_schedule_times
+    ['08:30', '10:10', '11:45', '14:00', '15:35', '17:10', '18:45']
+  end
+
+end
+
+class ScheduleOperationHandler
+  def initialize(dataset)
+    @dataset = dataset
+    @handlers = {}
+  end
+
+  def on_replace(&block)
+    @handlers[:replace] = block if @dataset[:operation] == 'replace'
+  end
+
+  def on_transfer(&block)
+    @handlers[:transfer] = block if @dataset[:operation] == 'transfer'
+  end
+
+  def on_delete(&block)
+    @handlers[:delete] = block if @dataset[:operation] == 'delete'
+  end
+
+  def process
+    handler = @handlers[@dataset[:operation].to_sym]
+    handler.call if handler
+  end
+end
+
+class ScheduleTransferService
+  def initialize(student_group_id:, course:, academic_period_id:)
+    @student_group_id = student_group_id
+    @course = course
+    @academic_period_id = academic_period_id
+    @schedule_getter = ScheduleGeter.new(
+      student_group_id: @student_group_id,
+      course: @course,
+      academic_period_id: @academic_period_id
+    )
+  end
+
+  def for_date(date)
+    @schedule_getter.set_schedule_for_date(date)
+    self
+  end
+
+  def changes
+    @schedule_getter.changes
+  end
+
+  def schedule
+    @schedule_getter.get_schedule
   end
 end

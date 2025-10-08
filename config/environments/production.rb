@@ -10,27 +10,9 @@ Rails.application.configure do
   config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
 
   config.cache_store = :redis_cache_store, {
-    url: ENV['REDIS_URL'],
-    sentinels: [
-      {
-        host: 'sentinel-1',
-        port: 26379,
-        password: ENV['REDIS_SENTINEL_PASSWORD']
-      },
-      {
-        host: 'sentinel-2', 
-        port: 26379,
-        password: ENV['REDIS_SENTINEL_PASSWORD']
-      },
-      {
-        host: 'sentinel-3',
-        port: 26379,
-        password: ENV['REDIS_SENTINEL_PASSWORD']
-      }
-    ],
+    url: ENV.fetch('REDIS_URL') { 'redis://:password@redis-master:6379/0' },
     password: ENV['REDIS_PASSWORD'],
-    namespace: "cache:production",
-    role: :master,
+    namespace: "cache:production"
   }
 
   config.time_zone = "Moscow"

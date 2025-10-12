@@ -1,22 +1,26 @@
-<nav class="navbar navbar-expand-lg position-sticky top-0">
-  <div class="container">
-    <a class="navbar-brand" href="<%= root_path %>">Название</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        
-      </ul>
-      <ul class="navbar-nav">
-        <% if current_user %>
-          <li class="nav-item"> <%= link_to "Редактировать расписание", admin_faculties_path, method: :get, class: "nav-link" %></li>
-          <li class="nav-item"> <%= button_to "Обновить ключи", keys_path, method: :post, class: "nav-link" %></li>
-          <li class="nav-item"> <%= button_to "Выйти", destroy_user_session_path, method: :delete, class: "nav-link" %></li>
-        <% else %>
-          <li class="nav-item"> <%= link_to "Войти", new_user_session_path, class: "nav-link"  %></li>
-        <% end %>
-      </ul>
-    </div>
-  </div>
-</nav>
+<div id="cd-nav" data-controller="navbar">
+  <a href="javascript:void(0)" class="cd-nav-trigger">
+    Menu<span></span>
+  </a>
+
+  <nav id="cd-main-nav">
+    <ul>
+      <li><a href="<%= root_path %>">Главная</a></li>
+      <li><a href="https://www.bsut.by">БелГут</a></li>
+      <li><%= link_to "Расписание для преподавателей", teachers_path %></li>
+      <% if current_user %>
+        <li><%= link_to "Редактировать расписание", admin_faculties_path %></li>
+        <li>
+          <%= link_to "Обновить ключи", keys_path, 
+                data: { turbo_method: :post, turbo_confirm: "Вы уверены?" } %>
+        </li>
+        <li>
+          <%= link_to "Выйти", destroy_user_session_path, 
+                data: { turbo_method: :delete, turbo_confirm: "Вы уверены?" } %>
+        </li>
+      <% else %>
+        <li><%= link_to "Войти", new_user_session_path %></li>
+      <% end %>
+    </ul>
+  </nav>
+</div>

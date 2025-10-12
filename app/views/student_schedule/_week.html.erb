@@ -1,0 +1,17 @@
+<!-- app/views/your_controller/_week.html.erb -->
+<div class="week-info" onclick="toggleWeek(this)">
+  <i class="bi bi-arrow-down-circle arrow-icon"></i>
+  <span>
+    <% if week == 0 %>
+      Текущая неделя
+    <% else %>
+      Следующая неделя
+    <% end %>
+    –
+    <% if under %>
+      Под чертой
+    <% else %>
+      Над чертой
+    <% end %>
+  </span>
+</div>

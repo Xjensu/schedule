@@ -75,3 +75,5 @@ application.register("exam-schedule", ExamScheduleController)
 import ScheduleSelectorController from "./schedule_selector_controller"
 application.register("schedule-selector", ScheduleSelectorController)
 
+import NavbarController from "./navbar_controller"
+application.register("navbar", NavbarController)

@@ -1,0 +1,18 @@
+<div class="day-header"><%= day.name %></div>
+
+<% day.lessons.each do |lesson| %>
+  <div class="row mb-3">
+    <div class="col-auto time-column"><%= lesson.time %></div>
+    <div class="col">
+      <% if lesson.present? %>
+        <div class="lesson-card">
+          <div class="lesson-type <%= lesson.type_class %>"><%= lesson.type_label %> <%= lesson.subject %></div>
+          <div class="teacher"><%= lesson.teacher %></div>
+          <div class="room"><%= lesson.room %></div>
+        </div>
+      <% else %>
+        <div class="empty-cell">Нет занятий</div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

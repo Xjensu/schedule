@@ -1,20 +1,23 @@
-<div class="d-flex justify-content-center align-items-hor">
-  <div class="card p-3">
-  <h2>Log in</h2>
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "week", "data-turbo-track": "reload" %>
+<% end %>
+
+<div class="login-box">
+  <h2>Login</h2>
 
   <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-    <div class="mb-3">
-      <%= f.label :email, class: "form-label"  %>
-      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control"  %>
+    <div class="user-box">
+      <%= f.text_field :email, required:"" %>
+      <%= f.label "Почта" %>
     </div>
 
-    <div class="mb-3">
-      <%= f.label :password, class: "form-label" %>
-      <%= f.password_field :password, autocomplete: "current-password", class: "form-control" %>
+    <div class="user-box">
+      <%= f.password_field :password, required:"" %>
+      <%= f.label "Пароль" %>
     </div>
 
-    <div class="actions">
-      <%= f.submit "Log in", class: "btn btn-primary" %>
+    <div class="button-frame">
+      <%= f.submit "Войти", class: "btn btn-outline-light rounded-4" %>
     </div>
   <% end %>
 </div>

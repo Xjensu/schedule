@@ -41,7 +41,6 @@ export default class extends Controller {
   checkMenu() {
     const $ = jQuery;
     var offset = 20;
-	console.log("Dad");
     var navigationContainer = $('#cd-nav');
     var mainNavigation = navigationContainer.find('#cd-main-nav ul');
 

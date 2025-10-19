@@ -26,7 +26,7 @@ class FacultyJob < ApplicationJob
         end.to_a
         Rails.cache.write(cache_key, schedules, expires_in: 25.hours)
 
-        exam_schedules = SpecialSchedule.joins(:special_period).where(special_period_id: SpecialPeriod.where(student_group_id: 1, course: 1, name: :exam).ids).order('special_periods.start_date ASC')
+        exam_schedules = SpecialSchedule.joins(:special_period).where(special_period_id: SpecialPeriod.where(student_group_id: group.id, course: course, name: :exam).ids).order('special_periods.start_date ASC')
         test_schedules = SpecialSchedule.where(special_period_id: SpecialPeriod.where(student_group_id: group.id, course: course, name: :test).ids)
         lecture_schedules = SpecialSchedule.where(special_period_id: SpecialPeriod.where(student_group_id: group.id, course: course, name: :lecture).ids)
 

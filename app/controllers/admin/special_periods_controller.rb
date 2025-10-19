@@ -6,24 +6,13 @@ class Admin::SpecialPeriodsController < ApplicationController
   end
 
   def create
-    case create_params[:name]
-    when "test"
-      create_test_period create_params
-    when "exam"
-      create_exam_period create_params
-    end
+    instance_eval("create_#{create_params[:name]}_period create_params")
     
     if request.referer.present? && URI(request.referer).host == request.host
       redirect_to request.referer
     else
       redirect_to root_path
     end
-  end
-
-  def edit
-  end
-
-  def update
   end
 
   def destroy
@@ -44,7 +33,6 @@ class Admin::SpecialPeriodsController < ApplicationController
 
 
   def create_test_period(create_params)
-    puts "DADA", create_params
     base_date = Date.parse create_params[:start_date]
     (0..5).each do |offset|
       SpecialPeriod.new( create_params.merge(start_date: base_date + offset.days) ).save

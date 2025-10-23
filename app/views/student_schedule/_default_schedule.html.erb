@@ -72,7 +72,7 @@
   }
   
   .lecture {
-    color: #28a745;
+    color: #000000;
   }
   
   .pz {
@@ -122,6 +122,19 @@
     border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 0;
+  }
+
+  .lesson-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 5px;
+  }
+
+  .dark-text {
+    color: #1e0023ff; /* или #000, если хочешь чёрный */
+    font-weight: bold;
+    font-size: 1.25rem;
   }
   
   .arrow-icon {
@@ -177,11 +190,13 @@
                   <% if lessons_at_time.any? %>
                     <% lessons_at_time.each do |lesson| %>
                       <div class="lesson-card">
-                        <div class="lesson-type <%= lesson.lesson.lesson_type.downcase %>">
-                          <%= lesson.lesson.lesson_type_name.upcase %> <%= lesson.subject.name %>
+                        <div class="lesson-header">
+                          <div class="lesson-type <%= lesson.lesson.present? ? lesson.lesson.lesson_type.downcase : "lecture" %>">
+                            <%= lesson.lesson.present? ? lesson.lesson.lesson_type_name.upcase : "" %> <%= lesson.subject.name %>
+                          </div>
+                          <div class="room dark-text"><%= lesson.classroom.present? ? lesson.classroom.name : "" %></div>
                         </div>
-                        <div class="teacher"><%= lesson.teacher.full_name %></div>
-                        <div class="room"><%= lesson.classroom.name %></div>
+                        <div class="teacher"><%= lesson.teacher.present? ? lesson.teacher.full_name : "" %></div>
                       </div>
                     <% end %>
                   <% else %>

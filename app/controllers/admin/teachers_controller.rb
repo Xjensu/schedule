@@ -20,7 +20,8 @@ class Admin::TeachersController < Admin::BaseAdminController
     
     respond_to do |format|
       if @teacher.save
-        format.turbo_stream
+        format.html { redirect_to request.referrer || admin_default_schedules_path }
+        format.turbo_stream { redirect_to request.referrer || admin_default_schedules_path }
       else
         format.turbo_stream { render :create_error }
       end
@@ -36,7 +37,8 @@ class Admin::TeachersController < Admin::BaseAdminController
     
     respond_to do |format|
       if @teacher.update(teacher_params)
-        format.turbo_stream
+        format.html { redirect_to request.referrer || admin_default_schedules_path }
+        format.turbo_stream { redirect_to request.referrer || admin_default_schedules_path }
       else
         format.turbo_stream { render :edit }
       end
@@ -48,7 +50,8 @@ class Admin::TeachersController < Admin::BaseAdminController
     
     respond_to do |format|
       if @teacher.destroy
-        format.turbo_stream
+        format.html { redirect_to request.referrer || admin_default_schedules_path }
+        format.turbo_stream { redirect_to request.referrer || admin_default_schedules_path }
       else
         format.turbo_stream { render :destroy_error }
       end

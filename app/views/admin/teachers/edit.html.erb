@@ -1,7 +1,7 @@
   <%= turbo_frame_tag "teacher_#{@teacher.id}" do %>
     <div class="card mb-3">
       <div class="card-body">
-        <%= render "form", teacher: @teacher %>
+        <%= render "form", teacher: @teacher, action: "patch" %>
         <%= link_to "Отмена", admin_teacher_path(@teacher), 
               class: "btn btn-secondary mt-2",
               data: { turbo_frame: "teacher_#{@teacher.id}" } %>

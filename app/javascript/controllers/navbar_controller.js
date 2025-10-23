@@ -10,7 +10,7 @@ export default class extends Controller {
     console.log("Navigation initialized");
     
     // browser window scroll (in pixels) after which the "menu" link is shown
-    var offset = 20;
+    var offset = 0;
 
     var navigationContainer = $('#cd-nav'),
         mainNavigation = navigationContainer.find('#cd-main-nav ul');
@@ -40,7 +40,7 @@ export default class extends Controller {
 
   checkMenu() {
     const $ = jQuery;
-    var offset = 20;
+    var offset = -1;
     var navigationContainer = $('#cd-nav');
     var mainNavigation = navigationContainer.find('#cd-main-nav ul');
 

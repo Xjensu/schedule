@@ -6,7 +6,12 @@ class Admin::SpecialPeriodsController < ApplicationController
   end
 
   def create
-    instance_eval("create_#{create_params[:name]}_period create_params")
+    case create_params[:name]
+    when "test"
+      create_test_period create_params
+    when "exam"
+      create_exam_period create_params
+    end
     
     if request.referer.present? && URI(request.referer).host == request.host
       redirect_to request.referer

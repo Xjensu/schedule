@@ -1,23 +1,35 @@
 <div class="row">
   <% default_times.each do |time| %>
-    <% 
-      regular_schedule = schedules.where(start_time: Time.zone.parse(time), under: false)
-      regular_schedule += [nil] * (2 - regular_schedule.size)
+    <%
+      time_obj = Time.zone.parse(time)
+      regular_schedules = schedules.where(start_time: time_obj, under: false)
+      under_schedules = schedules.where(start_time: time_obj, under: true)
       
-      
-      under_schedule = schedules.where(start_time: Time.zone.parse(time), under: true)
-      under_schedule += [nil] * (2 - under_schedule.size)
+      regular_schedules += [nil] * (2 - regular_schedules.size)
+      under_schedules += [nil] * (2 - under_schedules.size)
     %>
 
     <div class="col-md-2">
       <%= time %>
+
+      <%= button_to "Скопировать",
+            copy_under_schedule_admin_default_schedules_path(
+              group_id: param[:group_id],
+              academic_period_id: param[:academic_period_id],
+              course: param[:course],
+              day: param[:day],
+              time: time
+            ),
+            method: :post,
+            class: "btn btn-sm btn-outline-secondary mt-2",
+            form: { data: { turbo_frame: "_top" } } %>
     </div>
 
     <div class="col-md-9 pb-4">
-      <%= render partial: card_partial, collection: regular_schedule, as: :schedule, 
+      <%= render partial: card_partial, collection: regular_schedules, as: :schedule, 
            locals: { param: param.merge(under:false, time: time), card_stimulus:card_stimulus, card_attributes: card_attributes } %>
       <hr>
-      <%= render partial: card_partial, collection: under_schedule, as: :schedule, 
+      <%= render partial: card_partial, collection: under_schedules, as: :schedule, 
            locals: { param: param.merge(under: true, time: time) , card_stimulus:card_stimulus, card_attributes: card_attributes } %>
     </div>
   <% end %>

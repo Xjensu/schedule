@@ -9,7 +9,7 @@
 
   <%= render 'errors', schedule: schedule %>
 
-  <%= form_with model: schedule, url: url, method: method, data: { controller: "schedule-form teacher-selection classroom-selection", action: "turbo:submit-end->schedule-form#handleResponse"  } do |f| %>
+  <%= form_with model: schedule, url: url, method: method, data: { turbo_frame: "_top", controller: "schedule-form teacher-selection classroom-selection", action: "turbo:submit-end->schedule-form#handleResponse"  }  do |f| %>
 
     <%= f.hidden_field :teacher_id, data: { teacher_selection_target: "hiddenField" } %>
     <%= f.hidden_field :academic_period_id, value: schedule.academic_period_id %>

@@ -28,7 +28,8 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
 
     respond_to do |format|
       if @schedule.save
-        format.turbo_stream
+        format.html { redirect_to request.referrer || admin_default_schedules_path }
+        format.turbo_stream { redirect_to request.referrer || admin_default_schedules_path }
       else 
         format.turbo_stream { render :create_error }
       end
@@ -41,7 +42,8 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
     subject = processing_subjects( params[:schedule][:subject_id] )
     respond_to do |format|
       if @schedule.update(create_params.merge("subject_id": subject).merge("lesson_id": params[:lesson_id_input]))
-        format.turbo_stream
+        format.html { redirect_to request.referrer || admin_default_schedules_path }
+        format.turbo_stream { redirect_to request.referrer || admin_default_schedules_path }
       else 
         format.turbo_stream { render :update_error }
       end
@@ -51,9 +53,9 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
   def destroy
     puts params
     @schedule = Schedule.find(params[:id])
-    @schedule.destroy
     respond_to do |format|
-      format.turbo_stream
+      @schedule.destroy
+      format.html { redirect_to request.referrer || admin_default_schedules_path }
     end
   end
 
@@ -90,6 +92,57 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
     end
   end
 
+  def copy_under_schedule
+    group_id = params[:group_id]
+    academic_period_id = params[:academic_period_id]
+    course = params[:course]
+    day = params[:day]
+    time_str = params[:time]
+
+    time = Time.zone.parse("2000-01-01 #{time_str}")
+
+    # Удаляем ВСЕ существующие under: true записи для этого времени
+    Schedule.where(
+      student_group_id: group_id,
+      academic_period_id: academic_period_id,
+      course: course,
+      day_of_week: day,
+      start_time: time,
+      under: true
+    ).delete_all
+
+    # Копируем ВСЕ under: false записи
+    regular_schedules = Schedule.where(
+      student_group_id: group_id,
+      academic_period_id: academic_period_id,
+      course: course,
+      day_of_week: day,
+      start_time: time,
+      under: false
+    )
+
+    regular_schedules.find_each do |reg|
+      Schedule.create!(
+        student_group_id: reg.student_group_id,
+        academic_period_id: reg.academic_period_id,
+        course: reg.course,
+        day_of_week: reg.day_of_week,
+        start_time: reg.start_time,
+        under: true,
+        subject_id: reg.subject_id,
+        teacher_id: reg.teacher_id,
+        classroom_id: reg.classroom_id,
+        lesson_id: reg.lesson_id
+      )
+    end
+
+    redirect_to request.referrer || admin_default_schedules_path(
+      group_id: group_id,
+      academic_period_id: academic_period_id,
+      course: course,
+      day: day
+    )
+  end
 
   private
 
@@ -128,16 +181,9 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
   end
 
   def load_schedules
-    @schedules = Schedule.joins(:subject, :teacher, :classroom, :lesson, :student_group)
-                        .where(
-                          student_group_id: @group_id,
-                          academic_period_id: @academic_period_id,
-                          course: @course
-                        ).order(Subject.arel_table[:name].lower.asc)
+    @schedules = Schedule.includes(:subject, :teacher, :classroom, :lesson, :student_group).where( student_group_id: @group_id, academic_period_id: @academic_period_id, course: @course )
                         
     @schedules = @schedules.where(day_of_week: @day).order(:start_time)
-    
-
   end
 
 

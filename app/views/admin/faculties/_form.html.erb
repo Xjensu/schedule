@@ -20,8 +20,16 @@
 
   <div class="mb-3">
     <%= form.label "Время обработки", class: 'form-label' %>
-    <%= form.time_field :processing_time, class: "form-control #{'is-invalid' if faculty.errors[:short_name].any?}" %>
+    <%= form.time_field :processing_time, class: "form-control #{'is-invalid' if faculty.errors[:processing_time].any?}" %>
     <% faculty.errors.full_messages_for(:processing_time).each do |message| %>
+      <div class="invalid-feedback d-block"><%= message %></div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label "Ссылка на сайт", class: 'form-label' %>
+    <%= form.text_field :src, class: "form-control #{'is-invalid' if faculty.errors[:src].any?}" %>
+    <% faculty.errors.full_messages_for(:src).each do |message| %>
       <div class="invalid-feedback d-block"><%= message %></div>
     <% end %>
   </div>

@@ -1,68 +1,160 @@
-<% if @groups.present? %>
-  <%= form_with url: faculty_path(@faculty_id), method: :get, class: "row g-3", data: { controller: "schedule-selector", action: "change->schedule-selector#change" } do |form| %>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
 
-    <!-- Группа -->
-    <div class="col-12 col-sm-6 mb-3">
-      <%= form.label :group_id, "Группа:", class: "form-label fw-medium" %>
-      <%= form.select :group_id,
-            options_from_collection_for_select(@groups, :id, :group_name, @selected_group_id),
-            { prompt: "Выберите группу" },
-            { class: "form-select form-control-lg", required: true, "aria-required": "true", data: { schedule_selector_target: "select" } } %>
-    </div>
+  body {
+    background-color: #fff;
+    color: #002147;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
 
-    <!-- Курс -->
-    <div class="col-12 col-sm-6 mb-3">
-      <%= form.label :course, "Курс:", class: "form-label fw-medium" %>
-      <%= form.select :course,
-            options_for_select((1..5).to_a, @selected_course),
-            { prompt: "Выберите курс" },
-            { class: "form-select form-control-lg", required: true, "aria-required": "true", data: { schedule_selector_target: "select" } } %>
-    </div>
+  .container {
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+  }
 
-    <%= form.hidden_field :id, value: @faculty_id %>
+  .btn-primary {
+      background-color: #002147;
+      color: white;
+      border: none;
+  }
 
-  <% end %>
+  .btn-ex {
+      background-color: #d2b48c;
+      color: white;
+      border: none;
+  }
 
-  <!-- Кнопки расписания -->
-  <div class="mt-4">
-    <!-- Основное расписание -->
-    <%= form_with url: student_schedule_index_path, method: :get, class: "mb-3 w-100" do |form| %>
-      <%= form.hidden_field :group_id, value: @selected_group_id %>
-      <%= form.hidden_field :course, value: @selected_course %>
-      <%= form.submit "Основное расписание", class: "btn btn-primary w-100 btn-lg" %>
+  /* Увеличиваем метки "Группа" и "Курс" в 2 раза */
+  .form-label {
+    font-size: 2rem; /* Примерно в 2 раза больше стандартного (~1rem) */
+    margin-bottom: 12px;
+    display: block;
+    font-weight: 600;
+  }
+
+  /* Увеличиваем выпадающие списки в 2 раза */
+  .form-select-lg {
+    font-size: 1.5rem; /* ~24px — визуально в 2 раза крупнее */
+    padding: 16px 24px;
+    border-radius: 16px;
+    min-height: 64px;
+  }
+
+  /* Центрируем форму */
+  .schedule-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  /* Кнопка "Основное расписание" */
+  .main-schedule-btn {
+    margin-top: 16px;
+  }
+
+  /* Адаптивность */
+  @media (max-width: 768px) {
+    .form-label {
+      font-size: 1.5rem; /* чуть меньше на мобильных */
+    }
+
+    .form-select-lg {
+      font-size: 1.25rem;
+      padding: 14px 20px;
+      min-height: 56px;
+    }
+
+    .schedule-form {
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .extra-buttons .btn {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+
+<div class="container">
+  <% if @groups.present? %>
+    <!-- Форма выбора группы и курса -->
+    <%= form_with url: faculty_path(@faculty_id), method: :get, class: "schedule-form", data: { controller: "schedule-selector", action: "change->schedule-selector#change" } do |form| %>
+      <!-- Группа -->
+      <div>
+        <%= form.label :group_id, "Группа", class: "form-label" %>
+        <%= form.select :group_id,
+              options_from_collection_for_select(@groups, :id, :group_name, @selected_group_id),
+              { prompt: "Выберите группу" },
+              { class: "form-select form-select-lg", required: true, "aria-required": "true", data: { schedule_selector_target: "select" } } %>
+      </div>
+
+      <!-- Курс -->
+      <div>
+        <%= form.label :course, "Курс", class: "form-label" %>
+        <%= form.select :course,
+              options_for_select((1..5).to_a, @selected_course),
+              { prompt: "Выберите курс" },
+              { class: "form-select form-select-lg", required: true, "aria-required": "true", data: { schedule_selector_target: "select" } } %>
+      </div>
+
+      <%= form.hidden_field :id, value: @faculty_id %>
     <% end %>
 
-    <!-- Дополнительные кнопки (лекции, зачеты, экзамены) -->
-    <div class="d-flex flex-wrap gap-2 mt-3">
+    <!-- Основная кнопка -->
+    <div class="main-schedule-btn">
+      <%= form_with url: student_schedule_index_path, method: :get, local: true do |form| %>
+        <%= form.hidden_field :group_id, value: @selected_group_id %>
+        <%= form.hidden_field :course, value: @selected_course %>
+        <%= form.submit "Основное расписание", class: "btn btn-primary w-100 btn-lg" %>
+      <% end %>
+    </div>
+
+    <!-- Дополнительные кнопки -->
+    <div class="main-schedule-btn">
       <% if @exist_lecture %>
-        <%= form_with url: student_schedule_index_path, method: :get, class: "flex-grow-1" do |form| %>
+        <%= form_with url: student_schedule_index_path, method: :get, local: true do |form| %>
           <%= form.hidden_field :group_id, value: @selected_group_id %>
           <%= form.hidden_field :course, value: @selected_course %>
           <%= form.hidden_field :schedule_type, value: "lecture" %>
-          <%= form.submit "Лекционная неделя", class: "btn btn-success btn-sm w-100" %>
-        <% end %>
-      <% end %>
-
-      <% if @exist_test %>
-        <%= form_with url: student_schedule_index_path, method: :get, class: "flex-grow-1" do |form| %>
-          <%= form.hidden_field :group_id, value: @selected_group_id %>
-          <%= form.hidden_field :course, value: @selected_course %>
-          <%= form.hidden_field :schedule_type, value: "test" %>
-          <%= form.submit "Зачетная неделя", class: "btn btn-warning btn-sm w-100" %>
-        <% end %>
-      <% end %>
-
-      <% if @exist_exams %>
-        <%= form_with url: student_schedule_index_path, method: :get, class: "flex-grow-1" do |form| %>
-          <%= form.hidden_field :group_id, value: @selected_group_id %>
-          <%= form.hidden_field :course, value: @selected_course %>
-          <%= form.hidden_field :schedule_type, value: "exam" %>
-          <%= form.submit "Экзамены", class: "btn btn-warning btn-sm w-100" %>
+          <%= form.submit "Лекционная неделя", class: "btn btn-primary w-100 btn-lg"%>
         <% end %>
       <% end %>
     </div>
-  </div>
+    <div class="main-schedule-btn">
+      <% if @exist_test %>
+        <%= form_with url: student_schedule_index_path, method: :get, local: true do |form| %>
+          <%= form.hidden_field :group_id, value: @selected_group_id %>
+          <%= form.hidden_field :course, value: @selected_course %>
+          <%= form.hidden_field :schedule_type, value: "test" %>
+          <%= form.submit "Зачетная неделя", class: "btn btn-primary w-100 btn-lg" %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="main-schedule-btn">
+      <% if @exist_exams %>
+        <%= form_with url: student_schedule_index_path, method: :get, local: true do |form| %>
+          <%= form.hidden_field :group_id, value: @selected_group_id %>
+          <%= form.hidden_field :course, value: @selected_course %>
+          <%= form.hidden_field :schedule_type, value: "exam" %>
+          <%= form.submit "Экзамены", class: "btn btn-primary w-100 btn-lg" %>
+        <% end %>
+      <% end %>
+    </div>
 
-<% else %>
-  <div class="alert alert-info mt-4">Нет данных о группах.</div>
-<% end %>
+  <% else %>
+    <div class="mt-4">Нет данных о группах.</div>
+  <% end %>
+</div>

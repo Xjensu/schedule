@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "new_teacher" do %>
-  <%= render "form", teacher: @teacher, action: "create" %>
+  <%= render "form", teacher: @teacher, action: "post" %>
 
   <%= link_to "Cancel", admin_teachers_path, class: "btn btn-default" %>
 <% end %>

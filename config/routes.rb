@@ -33,6 +33,9 @@ Rails.application.routes.draw do
     resources :academic_periods, only: [:new, :create, :destroy, :edit, :update, :destroy]
     resources :default_schedules, only: [:index, :create, :update, :destroy] do
       get 'editor', on: :collection, as: :editor
+      collection do
+        post :copy_under_schedule
+      end
     end
     resources :teachers do
       collection do

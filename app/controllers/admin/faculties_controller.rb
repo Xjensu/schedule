@@ -53,6 +53,6 @@ class Admin::FacultiesController < Admin::BaseAdminController
   end
 
   def faculty_params
-    params.require(:faculty).permit(:full_name, :short_name)
+    params.require(:faculty).permit(:full_name, :short_name, :processing_time, :src)
   end
 end

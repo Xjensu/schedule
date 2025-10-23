@@ -1,17 +1,18 @@
-<%= form_with(model: teacher, url: admin_teachers_path,
+<%= form_with(model: teacher, url: action == "post" ? admin_teachers_path : admin_teacher_path, method: action || "patch",
               data: { turbo_frame: "teacher_#{teacher.id}" }) do |f| %>
-  <div class="mb-3">
-    <%= f.label :name, "Имя", class: "form-label" %>
-    <%= f.text_field :name, class: "form-control" %>
-    <% teacher.errors.full_messages_for(:name).each do |message| %>
-      <div class="invalid-feedback d-block"><%= message %></div>
-    <% end %>
-  </div>
-
+  
   <div class="mb-3">
     <%= f.label :surname, "Фамилия", class: "form-label" %>
     <%= f.text_field :surname, class: "form-control" %>
     <% teacher.errors.full_messages_for(:surname).each do |message| %>
+      <div class="invalid-feedback d-block"><%= message %></div>
+    <% end %>
+  </div>
+  
+  <div class="mb-3">
+    <%= f.label :name, "Имя", class: "form-label" %>
+    <%= f.text_field :name, class: "form-control" %>
+    <% teacher.errors.full_messages_for(:name).each do |message| %>
       <div class="invalid-feedback d-block"><%= message %></div>
     <% end %>
   </div>
@@ -26,7 +27,7 @@
 
   <div class="mb-3">
     <%= f.label :post, "Должность", class: "form-label" %>
-    <%= f.select :post, ["Старший преподаватель", "Доцент", "Преподаватель", "Аспирант"], 
+    <%= f.select :post, ["Преподаватель-стажер", "Ассистент", "Преподаватель", "Старший преподаватель", "Доцент",  "Профессор"], 
                 {}, class: "form-select" %>
     <% teacher.errors.full_messages_for(:post).each do |message| %>
       <div class="invalid-feedback d-block"><%= message %></div>

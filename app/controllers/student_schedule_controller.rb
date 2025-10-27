@@ -9,7 +9,7 @@ class StudentScheduleController < ApplicationController
       @schedule_type= :default
       @schedules = Rails.cache.read("schedules_for_group:#{group_id}_course:#{course}")
     end
-    @times = ['08:30', '10:10', '11:45', '14:00', '15:35', '17:10', '18:45']
+    @times = ['08:30', '10:10', '11:45', '14:00', '15:35', '17:10']
     @days = ['Понедельник', 'Вторник', 'Среда', 'Четверг','Пятница','Суббота']
   end
 end

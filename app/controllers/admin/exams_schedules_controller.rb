@@ -7,7 +7,7 @@ class Admin::ExamsSchedulesController < ApplicationController
     
     @special_schedule = SpecialSchedule.new()
     @special_schedules = SpecialSchedule.where(special_period_id: @special_periods.ids)
-    @times = ['8:30', '10:10', '11:45', '14:00', '15:35', '17:10', '18:45']
+    @times = ['8:30', '10:10', '11:45', '14:00', '15:35', '17:10']
   end
 
   def create

@@ -18,13 +18,12 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
 
   def create
     subject = processing_subjects( params[:schedule][:subject_id] )
-    puts params
+    auditory = processing_classrooms( params[:schedule][:classroom_id] )
 
     @schedule = Schedule.new(
-      create_params.merge("lesson_id": params[:lesson_id_input]).merge("subject_id": subject)
+      create_params.merge("lesson_id": params[:lesson_id_input]).merge("subject_id": subject).merge("classroom_id": auditory)
     )
 
-    puts "CREATE", @schedule.attributes
 
     respond_to do |format|
       if @schedule.save
@@ -40,8 +39,9 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
   def update
     @schedule = Schedule.find(params[:id])
     subject = processing_subjects( params[:schedule][:subject_id] )
+    auditory = processing_classrooms( params[:schedule][:classroom_id] )
     respond_to do |format|
-      if @schedule.update(create_params.merge("subject_id": subject).merge("lesson_id": params[:lesson_id_input]))
+      if @schedule.update(create_params.merge("subject_id": subject).merge("lesson_id": params[:lesson_id_input]).merge("classroom_id": auditory))
         format.html { redirect_to request.referrer || admin_default_schedules_path }
         format.turbo_stream { redirect_to request.referrer || admin_default_schedules_path }
       else 
@@ -145,6 +145,19 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
   end
 
   private
+
+  def processing_classrooms(param)
+    return nil if param.blank?
+    classroom = Classroom.where(name: param)
+    if classroom.present?
+      classroom = classroom.ids.first
+    else 
+      classroom = Classroom.new(name: param.to_s)
+      classroom.save!
+      classroom = classroom.id
+    end
+    classroom
+  end
 
   def processing_subjects(param)
     return nil if param.blank?

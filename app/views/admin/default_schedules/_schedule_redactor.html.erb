@@ -31,8 +31,8 @@
 
     <%= render partial: "teachers", locals: { teachers: @teachers, selected_teacher: schedule.teacher } %>
 
-
-    <%= render partial: "classrooms", locals: { classrooms: @classrooms, schedule: schedule } %>
+    <%= f.label :classroom_id, "Аудитория", class: "form-label" %>
+    <%= f.text_field :classroom_id, class: "form-control", value: schedule&.classroom&.name || nil %>
 
     <div class="mb-3" id="lessons">
       <% @lessons.each do |lesson| %>

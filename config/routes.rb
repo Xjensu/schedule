@@ -67,4 +67,6 @@ Rails.application.routes.draw do
   resources :faculties, only: [:index, :show]
 
   get "student_schedule/index"
+
+  get 'student_schedule/download', to: 'student_schedule#download', as: :download_student_schedule
 end

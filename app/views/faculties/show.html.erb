@@ -122,6 +122,15 @@
       <% end %>
     </div>
 
+    <!-- Кнопка скачивания HTML -->
+    <div class="main-schedule-btn">
+      <%= form_with url: download_student_schedule_path, method: :get, local: true do |form| %>
+        <%= form.hidden_field :group_id, value: @selected_group_id %>
+        <%= form.hidden_field :course, value: @selected_course %>
+        <%= form.submit "Скачать HTML", class: "btn btn-outline-secondary w-100 btn-lg" %>
+      <% end %>
+    </div>
+
     <!-- Дополнительные кнопки -->
     <div class="main-schedule-btn">
       <% if @exist_lecture %>

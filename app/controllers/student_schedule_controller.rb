@@ -42,7 +42,7 @@ class StudentScheduleController < ApplicationController
         
         send_data(
           html_content,
-          filename: "schedule_#{group_id}_course_#{course}_#{@schedule_type}.html",
+          filename: "#{@schedules[0][:dates][0][:schedule].first.student_group.group_name}-#{course}.html",
           type: 'text/html',
           disposition: 'attachment'
         )

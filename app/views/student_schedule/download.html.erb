@@ -29,6 +29,44 @@
       background: white;
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      cursor: pointer;
+      position: relative;
+      padding-left: 40px;
+    }
+    
+    /* Скрываем стандартные чекбоксы */
+    .week-toggle {
+      display: none;
+    }
+    
+    /* Кастомная стрелка */
+    .week-info::before {
+      content: "▼";
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: transform 0.3s ease;
+      font-size: 1rem;
+    }
+    
+    /* Анимация стрелки при свертывании */
+    .week-toggle:checked + .week-info::before {
+      transform: translateY(-50%) rotate(-90deg);
+    }
+    
+    /* Скрываем контент когда чекбокс отмечен */
+    .week-toggle:checked + .week-info + .week-content {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    
+    .week-content {
+      max-height: 5000px;
+      opacity: 1;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      overflow: hidden;
     }
     
     .day-header {
@@ -43,14 +81,14 @@
     
     .time-column {
       width: 70px;
-      text-align: center;
-      padding: 0 8px 0 0;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
+      text-align: right;
+      padding-right: 10px;
       font-weight: bold;
       color: #555;
       font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
     }
     
     .lesson-card {
@@ -96,6 +134,7 @@
       border: 1px dashed #dee2e6;
       border-radius: 8px;
       padding: 12px;
+      margin-bottom: 12px;
       background-color: #f8f9fa;
       min-height: 60px;
       display: flex;
@@ -135,6 +174,26 @@
     .col {
       flex: 1;
     }
+
+    .toggle-week{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    /* Расположение колонок для десктопа */
+    @media (min-width: 768px) {
+      .schedule-columns-container {
+        display: flex;
+        gap: 20px;
+      }
+      
+      .schedule-column {
+        flex: 1;
+        margin-bottom: 0;
+      }
+    }
     
     @media (max-width: 768px) {
       body {
@@ -144,6 +203,9 @@
       .time-column {
         width: 60px;
         font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
       }
       
       .lesson-card {
@@ -160,48 +222,57 @@
 </head>
 <body>
   <div class="schedule-container">
-    <% schedules.each do |schedule| %>
-      <div class="schedule-column">
-        <div class="week-info">
-          <% if !schedule[:under] %>
-            Под чертой
-          <% else %>
-            Над чертой
-          <% end %>
-        </div>
+    <div class="schedule-columns-container">
+      <% schedules.each_with_index do |schedule, index| %>
+        <div class="schedule-column">
+          <div class="toggle-week">
+            <!-- Скрытый чекбокс для переключения -->
+            <input type="checkbox" id="week-toggle-<%= index %>" class="week-toggle" checked>
+            
+            <label for="week-toggle-<%= index %>" class="week-info">
+              <% if !schedule[:under] %>
+                Под чертой
+              <% else %>
+                Над чертой
+              <% end %>
+            </label>
 
-        <% schedule[:dates].each_with_index do |dates_schedule, day_index| %>
-          <div class="day-header"><%= @days[day_index] %></div>
+            <div class="week-content">
+              <% schedule[:dates].each_with_index do |dates_schedule, day_index| %>
+                <div class="day-header"><%= @days[day_index] %></div>
 
-          <% @times.each do |time_str| %>
-            <div class="row">
-              <div class="col-auto time-column"><%= time_str %></div>
-              <div class="col">
-                <% lessons_at_time = dates_schedule[:schedule].select do |lesson|
-                    lesson.start_time.strftime("%H:%M") == time_str
-                  end %>
+                <% @times.each do |time_str| %>
+                  <div class="row">
+                    <div class="col-auto time-column"><%= time_str %></div>
+                    <div class="col">
+                      <% lessons_at_time = dates_schedule[:schedule].select do |lesson|
+                          lesson.start_time.strftime("%H:%M") == time_str
+                        end %>
 
-                <% if lessons_at_time.any? %>
-                  <% lessons_at_time.each do |lesson| %>
-                    <div class="lesson-card">
-                      <div class="lesson-header">
-                        <div class="lesson-type <%= lesson.lesson.present? ? lesson.lesson.lesson_type.downcase : "lecture" %>">
-                          <%= lesson.lesson.present? ? lesson.lesson.lesson_type_name.upcase : "" %> <%= lesson.subject.name %>
-                        </div>
-                        <div class="room dark-text"><%= lesson.classroom.present? ? lesson.classroom.name : "" %></div>
-                      </div>
-                      <div class="teacher"><%= lesson.teacher.present? ? lesson.teacher.full_name : "" %></div>
+                      <% if lessons_at_time.any? %>
+                        <% lessons_at_time.each do |lesson| %>
+                          <div class="lesson-card">
+                            <div class="lesson-header">
+                              <div class="lesson-type <%= lesson.lesson.present? ? lesson.lesson.lesson_type.downcase : "lecture" %>">
+                                <%= lesson.lesson.present? ? lesson.lesson.lesson_type_name.upcase : "" %> <%= lesson.subject.name %>
+                              </div>
+                              <div class="room dark-text"><%= lesson.classroom.present? ? lesson.classroom.name : "" %></div>
+                            </div>
+                            <div class="teacher"><%= lesson.teacher.present? ? lesson.teacher.full_name : "" %></div>
+                          </div>
+                        <% end %>
+                      <% else %>
+                        <div class="empty-cell">Нет занятий</div>
+                      <% end %>
                     </div>
-                  <% end %>
-                <% else %>
-                  <div class="empty-cell">Нет занятий</div>
+                  </div>
                 <% end %>
-              </div>
+              <% end %>
             </div>
-          <% end %>
-        <% end %>
-      </div>
-    <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
   </div>
 </body>
 </html>

@@ -5,7 +5,8 @@ class Lesson < ApplicationRecord
     lab: 2,
     test: 3,
     exam: 4,
-    under: 5
+    under: 5,
+    kp: 6
   }
 
   def lesson_type_name
@@ -15,7 +16,8 @@ class Lesson < ApplicationRecord
       lab: "ЛАБ",
       test: "Зачёт",
       exam: "Экзамен",
-      under: "Под чертой"
+      under: "Под чертой",
+      kp: "КП"
     }[lesson_type.to_sym]
   end
 end

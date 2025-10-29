@@ -62,7 +62,7 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
 
   def editor
     load_data_from_params
-    @lessons = Lesson.where(lesson_type: [:lecture, :pz, :lab])
+    @lessons = Lesson.where(lesson_type: [:lecture, :pz, :lab, :kp])
     @teachers = TeachersFetcher.new(
       search_query: params[:teacher_search],
       limit: params[:teacher_search].present? ? 10 : nil,

@@ -1,5 +1,5 @@
 
-[ :lecture, :pz, :lab, :test, :exam, :under ].each do |type|
+[ :lecture, :pz, :lab, :test, :exam, :under, :kp ].each do |type|
   Lesson.create!(lesson_type: type)
 end
 

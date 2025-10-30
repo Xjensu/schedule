@@ -105,6 +105,9 @@ services:
       - REDIS_MASTER_NAME=mymaster
       - REDIS_PASSWORD=${REDIS_PASSWORD}
 
+      - MAILER_USERNAME=${MAILER_USERNAME}
+      - MAILER_PASSWORD=${MAILER_PASSWORD}
+      - DOMAIN=${DOMAIN}
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis-master:6379/0
     volumes:
       - app-storage:/rails/storage
@@ -132,6 +135,9 @@ services:
       - REDIS_MASTER_NAME=mymaster
       - REDIS_PASSWORD=${REDIS_PASSWORD}
 
+      - MAILER_USERNAME=${MAILER_USERNAME}
+      - MAILER_PASSWORD=${MAILER_PASSWORD}
+      - DOMAIN=${DOMAIN}
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis-master:6379/0
     volumes:
       - app-storage:/rails/storage
@@ -157,6 +163,10 @@ services:
 
       - REDIS_MASTER_NAME=mymaster
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+
+      - MAILER_USERNAME=${MAILER_USERNAME}
+      - MAILER_PASSWORD=${MAILER_PASSWORD}
+      - DOMAIN=${DOMAIN}
 
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis-master:6379/0
     volumes:

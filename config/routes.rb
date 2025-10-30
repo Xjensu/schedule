@@ -58,7 +58,7 @@ Rails.application.routes.draw do
       mount Sidekiq::Web => '/sidekiq'
     end
   end
-  devise_for :users
+  devise_for :users, controllers: { sessions: 'users/sessions' }, skip: [:registrations]
 
   get "up" => "rails/health#show", as: :rails_health_check
   root "home#index"

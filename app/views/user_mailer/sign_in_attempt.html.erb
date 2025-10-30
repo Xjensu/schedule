@@ -1,0 +1,14 @@
+<p>Здравствуйте, <%= @user.email %>!</p>
+
+<p>Зафиксирована попытка входа в ваш аккаунт:</p>
+
+<ul>
+  <li><strong>IP-адрес:</strong> <%= @ip_address %></li>
+  <li><strong>Время:</strong> <%= @timestamp.strftime("%d.%m.%Y в %H:%M:%S") %></li>
+</ul>
+
+<% if @user.admin? %>
+  <p style="color: red; font-weight: bold;">Это административный аккаунт. Если это были не вы — смените пароль немедленно!</p>
+<% end %>
+
+<p>Если это были вы — игнорируйте это письмо.</p>

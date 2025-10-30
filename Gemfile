@@ -82,3 +82,5 @@ gem "hiredis", "~> 0.6.3"
 gem "sidekiq", "~> 8.0"
 
 gem "sidekiq-cron", "~> 2.3"
+
+gem "devise-security", "~> 0.18.0"

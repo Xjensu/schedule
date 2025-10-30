@@ -1,7 +1,6 @@
 require 'sidekiq/web'
 require 'sidekiq/cron/web'
 Rails.application.routes.draw do
-  captcha_route
   resources :teachers, only: [:index]
   resources :teacher_schedules, only: [:index]
   

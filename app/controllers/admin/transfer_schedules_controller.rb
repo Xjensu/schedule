@@ -31,8 +31,8 @@ class Admin::TransferSchedulesController < Admin::BaseAdminController
   end
 
   def update_sidebar
-
-    @dataset = params.require(:dataset).permit!.to_h.symbolize_keys
+    permitted_params = params.require(:dataset).permit(:source_schedule_id, :target_schedule_id, :group_id, :source_date, :target_date, :course, :operation, :source, :target, :source_time, :target_time)
+    @dataset = permitted_params.to_h.symbolize_keys
     @target = @dataset[:target].to_s
     @source = @dataset[:source].to_s
 

@@ -27,8 +27,8 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
 
     respond_to do |format|
       if @schedule.save
-        format.html { redirect_to request.referrer || admin_default_schedules_path }
-        format.turbo_stream { redirect_to request.referrer || admin_default_schedules_path }
+        format.html { redirect_back fallback_location: admin_default_schedules_path, allow_other_host: false }
+        format.turbo_stream { redirect_back fallback_location: admin_default_schedules_path, allow_other_host: false }
       else 
         format.turbo_stream { render :create_error }
       end
@@ -42,8 +42,8 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
     auditory = processing_classrooms( params[:schedule][:classroom_id] )
     respond_to do |format|
       if @schedule.update(create_params.merge("subject_id": subject).merge("lesson_id": params[:lesson_id_input]).merge("classroom_id": auditory))
-        format.html { redirect_to request.referrer || admin_default_schedules_path }
-        format.turbo_stream { redirect_to request.referrer || admin_default_schedules_path }
+        format.html { redirect_back fallback_location: admin_default_schedules_path, allow_other_host: false }
+        format.turbo_stream { redirect_back fallback_location: admin_default_schedules_path, allow_other_host: false }
       else 
         format.turbo_stream { render :update_error }
       end
@@ -55,7 +55,7 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
     @schedule = Schedule.find(params[:id])
     respond_to do |format|
       @schedule.destroy
-      format.html { redirect_to request.referrer || admin_default_schedules_path }
+      format.html { edirect_back fallback_location: admin_default_schedules_path, allow_other_host: false }
     end
   end
 
@@ -136,12 +136,7 @@ class Admin::DefaultSchedulesController < Admin::BaseAdminController
       )
     end
 
-    redirect_to request.referrer || admin_default_schedules_path(
-      group_id: group_id,
-      academic_period_id: academic_period_id,
-      course: course,
-      day: day
-    )
+    redirect_back fallback_location: admin_default_schedules_path, allow_other_host: false
   end
 
   private

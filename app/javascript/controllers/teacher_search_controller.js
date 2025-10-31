@@ -33,9 +33,10 @@ export default class extends Controller {
           'Accept': 'text/vnd.turbo-stream.html'
         }
       })
-      const html = await response.text()
-      
-      document.getElementById(this.targetValue).innerHTML = html
+     if (response.ok) {
+        const stream = await response.text()
+        Turbo.renderStreamMessage(stream)
+      }
     } else {
       this.reset()
     }
@@ -49,8 +50,6 @@ export default class extends Controller {
       }
     })
     .then(response => response.text())
-    .then(html => {
-      document.getElementById(this.targetValue).innerHTML = html
-    })
+    .then(stream => Turbo.renderStreamMessage(stream))
   }
 }

@@ -14,7 +14,7 @@ class Admin::SpecialPeriodsController < ApplicationController
     end
     
     if request.referer.present? && URI(request.referer).host == request.host
-      redirect_to request.referer
+      redirect_back fallback_location: root_path, notice: "Сообщение об успехе", allow_other_host: false
     else
       redirect_to root_path
     end
@@ -24,7 +24,7 @@ class Admin::SpecialPeriodsController < ApplicationController
     @special_period = SpecialPeriod.find(params[:id])
     @special_period.destroy
     if request.referer.present? && URI(request.referer).host == request.host
-      redirect_to request.referer
+      redirect_back fallback_location: root_path, notice: "Сообщение об успехе", allow_other_host: false
     else
       redirect_to root_path
     end

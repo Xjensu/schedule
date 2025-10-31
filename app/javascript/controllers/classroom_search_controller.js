@@ -28,9 +28,11 @@ export default class extends Controller {
           'Accept': 'text/vnd.turbo-stream.html'
         }
       })
-      const html = await response.text()
-      
-      document.getElementById("schedule_classrooms").innerHTML = html
+
+      if (response.ok) {
+        const stream = await response.text()
+        Turbo.renderStreamMessage(stream)
+      }
     } else {
       this.reset()
     }
@@ -38,15 +40,10 @@ export default class extends Controller {
 
   reset() {
     this.inputTarget.value = ''
-    // Здесь можно добавить запрос для получения исходного списка
     fetch(this.classroomsUrlValue, {
-      headers: {
-        'Accept': 'text/vnd.turbo-stream.html'
-      }
+      headers: { 'Accept': 'text/vnd.turbo-stream.html' }
     })
     .then(response => response.text())
-    .then(html => {
-      document.getElementById("schedule_classrooms").innerHTML = html
-    })
+    .then(stream => Turbo.renderStreamMessage(stream))
   }
 }

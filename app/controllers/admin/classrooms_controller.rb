@@ -20,8 +20,8 @@ class Admin::ClassroomsController < Admin::BaseAdminController
 
     respond_to do |format|
       if @classroom.save
-        format.html { redirect_to request.referrer || admin_default_schedules_path }
-        format.turbo_stream { redirect_to request.referrer || admin_default_schedules_path }
+        format.html { redirect_to admin_classrooms_path || admin_default_schedules_path }
+        format.turbo_stream { redirect_to admin_classrooms_path || admin_default_schedules_path }
       else
         format.turbo_stream { render :create_error }
       end
@@ -33,8 +33,8 @@ class Admin::ClassroomsController < Admin::BaseAdminController
     
     respond_to do |format|
       if @classroom.destroy
-        format.html { redirect_to request.referrer || admin_default_schedules_path }
-        format.turbo_stream { redirect_to request.referrer || admin_default_schedules_path }
+        format.html { redirect_to admin_classrooms_path || admin_default_schedules_path }
+        format.turbo_stream { redirect_to admin_classrooms_path || admin_default_schedules_path }
       else
         format.turbo_stream { render :destroy_error }
       end

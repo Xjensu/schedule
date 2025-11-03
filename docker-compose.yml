@@ -82,7 +82,9 @@ services:
         "--repl-timeout", "60",
         "--min-replicas-to-write", "0",
         "--client-output-buffer-limit", "replica 512mb 128mb 60",
-        "--loglevel", "debug"
+        "--loglevel", "notice",
+        "--maxmemory", "512mb",
+        "--maxmemory-policy", "allkeys-lru" 
       ]
     networks:
       internal_network:

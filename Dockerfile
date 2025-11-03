@@ -16,7 +16,11 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libhiredis-dev libvips postgresql-client redis-tools && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 libhiredis-dev libvips postgresql-client && \
+    # Добавляем репозиторий с исправленной версией или обновляем
+    apt-get update -qq && \
+    apt-get install --no-install-recommends -y redis-tools=5:7.0.15-1~deb12u6 || \
+    apt-get install --no-install-recommends -y redis-tools && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
@@ -84,6 +88,6 @@ USER 1000:1000
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via Thruster by default, this can be overwritten at runtime
+# Start server via puma
 EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
+CMD ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "80"]

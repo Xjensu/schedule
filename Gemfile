@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 8.0.2"
+gem "rails", "~> 8.0.2.1"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use postgresql as the database for Active Record
@@ -37,7 +37,7 @@ gem "bootsnap", require: false
 gem "kamal", require: false
 
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
-gem "thruster", require: false
+# gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
@@ -84,3 +84,7 @@ gem "sidekiq", "~> 8.0"
 gem "sidekiq-cron", "~> 2.3"
 
 gem "devise-security", "~> 0.18.0"
+
+gem 'nokogiri', '>= 1.18.9'
+
+gem 'rack', '>= 3.2.2'

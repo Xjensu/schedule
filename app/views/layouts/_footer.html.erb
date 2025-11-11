@@ -1,10 +1,206 @@
-<div class="container">
-  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4">
-    <div class="col-md-4 d-flex align-items-center">
-      <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
-        <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
-      </a>
-      <span class="text-muted">&copy <%= Date.current.year %> Test App. All rights reserved.</span>
+<style>
+  footer {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      line-height: 1;
+      padding: 20px;
+  }
+  
+  footer .container {
+      max-width: 1200px;
+      border-radius: 8px;
+      background-color: #000;
+  }
+  
+  footer .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+  }
+  
+  footer .logo {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 1px;
+  }
+  
+  footer .menu-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+  }
+  
+  footer .menu-icon span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background-color: #fff;
+  }
+  
+  footer .main-title {
+      font-size: clamp(2rem, 5vw, 6rem);
+      font-weight: 700;
+      line-height: 0.9;
+      letter-spacing: -2px;
+      margin: 30px 0;
+      text-align: center;
+  }
+  
+  footer .contact-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+  }
+  
+  footer .contact-info {
+      flex: 1;
+      min-width: 250px;
+  }
+  
+  footer .address {
+      margin-bottom: 30px;
+  }
+  
+  footer .address-number {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 5px;
+  }
+  
+  footer .address-street {
+      font-size: 16px;
+      margin-bottom: 5px;
+  }
+  
+  footer .address-city {
+      font-size: 16px;
+      margin-bottom: 5px;
+  }
+  
+  footer .address-postal {
+      font-size: 16px;
+  }
+  
+  footer .contact-details {
+      margin-top: 20px;
+  }
+  
+  footer .tg, .tg-us {
+      font-size: 14px;
+      margin-bottom: 5px;
+  }
+  
+  footer .tg-us {
+      text-decoration: underline;
+      cursor: pointer;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+      footer .container {
+          padding: 20px;
+          border: none;
+      }
+      
+      footer .header {
+          margin-bottom: 15px;
+      }
+      
+      footer .main-title {
+          font-size: clamp(3rem, 12vw, 8rem);
+          margin-bottom: 20px;
+      }
+      
+      footer .contact-container {
+          flex-direction: column;
+          gap: 30px;
+      }
+      
+      footer .contact-info {
+          min-width: auto;
+      }
+      
+      footer .address-number {
+          font-size: 16px;
+      }
+      
+      footer .address-street, .address-city, .address-postal {
+          font-size: 14px;
+      }
+      
+      footer .tg, .tg-us {
+          font-size: 12px;
+      }
+  }
+  @media (max-width: 480px) {
+      footer .container {
+          padding: 15px;
+      }
+      
+      footer .header {
+          padding: 0 10px;
+      }
+      
+      footer .main-title {
+          font-size: clamp(2.5rem, 15vw, 6rem);
+          margin-bottom: 15px;
+      }
+      
+      footer .contact-container {
+          gap: 20px;
+      }
+      
+      footer .address-number {
+          font-size: 14px;
+      }
+      
+      footer .address-street, .address-city, .address-postal {
+          font-size: 12px;
+      }
+      
+      footer .tg, .tg-us {
+          font-size: 11px;
+      }
+  }
+</style>
+
+<footer>
+  <div class="container">
+    <div class="header">
+      <div class="logo">УО БелГУТ</div>
+      <div class="menu-icon">
+          2025
+      </div>
     </div>
-  </footer>
-</div>
+    
+    <h1 class="main-title">Расписание Занятий</h1>
+    
+    <div class="contact-container">
+      <div class="contact-info">
+          <div class="address">
+              <div class="address-number">Разработчики:</div>
+              <div class="address-city">Бусько А.С.</div>
+              <div class="address-city">Громыко Е.В.</div>
+          </div>
+      </div>
+      
+      <div class="contact-info">
+          <div class="address">
+              <div class="address-number">Разработан Стротиельным Факультетом</div>
+              <div class="address-street">Сайт находится в тестовом режиме</div>
+              <div class="address-city">Просим сообщать об ошибках с интерфейсом, работе в десктоп/мобильной версии. Пожелания в улучшении интерфейса приветствуются.</div>
+              <div class="address-city">Мы ценим каждый отзыв и стараемся сделать Наш университет лучше!</div>
+          </div>
+          <div class="contact-details">
+              <div class="tg">Телеграм для обратной связи</div>
+              <div class="tg-us">@xjensu</div>
+              <div class="tg-us">@rnmthe</div>
+          </div>
+      </div>
+    </div>
+  </div>
+</footer>

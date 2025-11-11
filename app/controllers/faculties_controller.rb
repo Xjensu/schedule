@@ -3,9 +3,9 @@ class FacultiesController < ApplicationController
   end
 
   def show
-    @faculty_id = params[:id]
+    @short_name = Faculty.find(params[:id]).short_name
 
-    @groups = Rails.cache.read("faculty:#{@faculty_id}_groups")
+    @groups = Rails.cache.read("faculty:#{params[:id]}_groups")
     if @groups.present?
       if params[:group_id].present?
         @selected_group_id = params[:group_id].to_i 

@@ -10,11 +10,11 @@ class HomeController < ApplicationController
   private
 
   def update_keys
-    DateProcessingJob.perform_async
-    StaticDatasJob.perform_async
+    DateProcessingJob.perform_sync
+    StaticDatasJob.perform_sync
     Faculty.find_each do |faculty|
       FacultyJob.perform_now(faculty.id)
     end
-    TeacherScheduleJob.perform_async
+    TeacherScheduleJob.perform_sync
   end
 end

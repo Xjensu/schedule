@@ -1,0 +1,25 @@
+<button class="button" onclick="document.getElementById('schedule-form').submit()">
+  Основное расписание
+</button>
+
+<button class="button" onclick="document.getElementById('download-form').submit()">
+  Основное расписание (html)
+</button>
+
+<button class="button <%= 'disabled' unless exist_lecture %>" 
+        <%= 'disabled' unless exist_lecture %>
+        onclick="<%= exist_lecture ? "document.getElementById('lecture-form').submit()" : "return false" %>">
+  Лекционная неделя
+</button>
+
+<button class="button <%= 'disabled' unless exist_test %>" 
+        <%= 'disabled' unless exist_test %>
+        onclick="<%= exist_test ? "document.getElementById('test-form').submit()" : "return false" %>">
+  Зачетная неделя
+</button>
+
+<button class="button <%= 'disabled' unless exist_exams %>" 
+        <%= 'disabled' unless exist_exams %>
+        onclick="<%= exist_exams ? "document.getElementById('exam-form').submit()" : "return false" %>">
+  Экзамены
+</button>

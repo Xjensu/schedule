@@ -157,22 +157,26 @@
 </style>
 
 <div class="container schedule-container">
-  <% schedules.each do |schedule| %>
-    <div class="week-content">
-      <div class="day-header"><%= Date.parse(schedule["special_period"]["start_date"]).strftime('%d.%m.%y') %></div>
+  <% if schedules.present? %>
+    <% schedules.each do |schedule| %>
+      <div class="week-content">
+        <div class="day-header"><%= Date.parse(schedule["special_period"]["start_date"]).strftime('%d.%m.%y') %></div>
 
-      <div class="row mb-3">
-        <div class="col">
-          <div class="lesson-card">
-            <div class="lesson-type">
-              <%= schedule["subject"]["name"] %>
+        <div class="row mb-3">
+          <div class="col">
+            <div class="lesson-card">
+              <div class="lesson-type">
+                <%= schedule["subject"]["name"] %>
+              </div>
+              <div class="teacher"><%= schedule["teacher"]["surname"] %> <%= schedule["teacher"]["name"][0] %>. <%= schedule["teacher"]["patronymic"][0] %>.</div>
+              <div class="room"><%= schedule["classroom"]["name"] %></div>
             </div>
-            <div class="teacher"><%= schedule["teacher"]["surname"] %> <%= schedule["teacher"]["name"][0] %>. <%= schedule["teacher"]["patronymic"][0] %>.</div>
-            <div class="room"><%= schedule["classroom"]["name"] %></div>
           </div>
         </div>
       </div>
-    </div>
+    <% end %>
+  <% else %>
+    Нет данных
   <% end %>
 </div>
 

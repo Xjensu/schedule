@@ -157,38 +157,42 @@
 </style>
 
 <div class="container schedule-container">
-  <% days.each_with_index do |day, i| %>
-    <div class="week-content">
-      <div class="day-header"><%= day %></div>
-      <% times.each do |time| %>
-        <div class="row mb-3">
-          <div class="col-auto time-column"><%= time %></div>
-          <div class="col">
-            <% filtered_schedule = schedules.select do |schedule| %>
-                <% time_part = schedule["start_time"].split("T")[1].split(":")[0..1].join(":") %>
-                <% time_matches = time_part == time %>
-                <% start_date_str = schedule["special_period"]["start_date"] %>
-                <% weekday_num = Date.parse(start_date_str).wday %>
-                <% day_matches = weekday_num == (i + 1) %>
-                <% time_matches && day_matches %>
-              <% end %>
-            <% if filtered_schedule.present? %>
-              <% filtered_schedule = filtered_schedule[0] %>
-              <div class="lesson-card">
-                <div class="lesson-type">
-                  <%= filtered_schedule["subject"]["name"] %>
+  <% if schedules.present? %>
+    <% days.each_with_index do |day, i| %>
+      <div class="week-content">
+        <div class="day-header"><%= day %></div>
+        <% times.each do |time| %>
+          <div class="row mb-3">
+            <div class="col-auto time-column"><%= time %></div>
+            <div class="col">
+              <% filtered_schedule = schedules.select do |schedule| %>
+                  <% time_part = schedule["start_time"].split("T")[1].split(":")[0..1].join(":") %>
+                  <% time_matches = time_part == time %>
+                  <% start_date_str = schedule["special_period"]["start_date"] %>
+                  <% weekday_num = Date.parse(start_date_str).wday %>
+                  <% day_matches = weekday_num == (i + 1) %>
+                  <% time_matches && day_matches %>
+                <% end %>
+              <% if filtered_schedule.present? %>
+                <% filtered_schedule = filtered_schedule[0] %>
+                <div class="lesson-card">
+                  <div class="lesson-type">
+                    <%= filtered_schedule["subject"]["name"] %>
+                  </div>
+                  <div class="teacher"><%= filtered_schedule["teacher"]["surname"] %> <%= filtered_schedule["teacher"]["name"][0] %>. <%= filtered_schedule["teacher"]["patronymic"][0] %>.</div>
+                  <div class="room"><%= filtered_schedule["classroom"]["name"] %></div>
                 </div>
-                <div class="teacher"><%= filtered_schedule["teacher"]["surname"] %> <%= filtered_schedule["teacher"]["name"][0] %>. <%= filtered_schedule["teacher"]["patronymic"][0] %>.</div>
-                <div class="room"><%= filtered_schedule["classroom"]["name"] %></div>
-              </div>
-            <% else %>
-              <div class="empty-cell">Нет занятий</div>
-            <% end %>
+              <% else %>
+                <div class="empty-cell">Нет занятий</div>
+              <% end %>
+            </div>
           </div>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    Нет данных
+  <% end%>
 </div>
 
 

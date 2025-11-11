@@ -15,9 +15,5 @@ class FacultiesController < ApplicationController
         @selected_course =  1
       end
     end
-
-    @exist_lecture = Rails.cache.exist?("lecture_schedule:group:#{@selected_group_id}:course:#{@selected_course}")
-    @exist_exams = Rails.cache.exist?("exam_schedule:group:#{@selected_group_id}:course:#{@selected_course}")
-    @exist_test = Rails.cache.exist?("test_schedule:group:#{@selected_group_id}:course:#{@selected_course}")
   end
 end

@@ -1,19 +1,96 @@
-<section class="d-flex justify-content-center align-items-center flex-column">
-  <%= form_tag teachers_path, method: :get do %>
-    <div class="input-group rounded">
-      <%= text_field_tag :search, params[:search], placeholder: "Найти преподавателя", class: "form-control rounded" %>
-    
-      <%= button_tag type: "submit", class:"input-group-text border-0" do %>
-        <i class="bi bi-search"></i>
-      <% end %>
-    </div>
-  <% end %>
-</section>
+<style>
+  .menu-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+  }
+  .menu-item:last-child {
+    border-bottom: none;
+  }
+  .menu-item-number {
+    margin-right: 10px;
+  }
+  .menu-item-text {
+    font-size: 1.2rem;
+  }
+  .menu-item-active {
+    color: #947d7f; /* Красный цвет для активного пункта */
+  }
+  .search-container {
+    padding: 15px 20px;
+  }
+  .search-form {
+    display: flex;
+    align-items: center;
+  }
+  .search-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+  }
+  .search-button {
+    background-color: #212529;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+  }
+  .menu-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    padding: 20px;
+    border-top: 2px solid #000;
+    z-index: 1000;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+  .logo-circle {
+    width: 20px;
+    height: 20px;
+    background-color: #dc3545;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
 
-<div>
-  <% @teachers.each do |teacher| %>
-    <%= link_to teacher_schedules_path(id: teacher.id) do %>
-      <p><%= teacher.post %> <%= teacher.full_name %></p>
+  .menu-item a {
+      color: inherit !important;
+      text-decoration: none !important;
+  }
+  .menu-item a:hover {
+      color: inherit !important;
+      text-decoration: none !important;
+  }
+</style>
+
+<div class="search-container">
+    <%= form_tag teachers_path, method: :get, class: "d-flex align-items-center" do %>
+        <%= text_field_tag :search, params[:search], 
+            placeholder: "Найти преподавателя", 
+            class: "form-control search-input ps-5", 
+            aria_label: "search" %>
+        <%= button_tag type: "submit", class: "btn btn-search btn-dark ms-2" do %>
+            <i class="bi bi-search"></i>
+        <% end %>
     <% end %>
-  <% end %> 
-</div>              
+</div>
+<!-- Меню внизу экрана -->
+<div class="menu-container">
+    <h5 class="text-dark">Список преподавателей</h5>
+    <% @teachers.each do |teacher| %>
+        <%= link_to teacher_schedules_path(id: teacher.id), class: "text-decoration-none text-dark" do %>
+            <div class="menu-item">
+                <span class="menu-item-text"><%= teacher.full_name %></span>
+                <span class="menu-item-number"><%= teacher.post %></span>
+            </div>
+        <% end %>
+    <% end %>
+</div>

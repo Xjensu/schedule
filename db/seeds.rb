@@ -3,7 +3,7 @@
   Lesson.create!(lesson_type: type)
 end
 
-User.create(email: 'testadmin@gmail.com', password: 'password', admin: true)
+User.create(email: 'buskoaleksej5@gmail.com', password: 'password', admin: true)
 
 [
   { full_name: "Строительный факультет", short_name: "СТР", processing_time: "14:00", src: "https://www.bsut.by/university/faculties/sf" },

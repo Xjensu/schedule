@@ -40,78 +40,72 @@
   }
   
   .time-column {
-    display: flex;
-    align-items: center;
     width: 80px;
-    text-align: left;
+    text-align: right;
     padding-right: 15px;
-    font-weight: normal;
-    color: #000;
-    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-weight: bold;
+    color: #555;
   }
   
   .lesson-card {
-    border: none;
-    /* border-top: 2px solid #000; */
-    padding: 12px 0;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
     margin-bottom: 15px;
-    background-color: transparent;
-    box-shadow: none;
-    transition: none;
-    min-height: auto;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+    min-height: 70px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
   
   .lesson-card:hover {
-    /* Убрана стилизация при наведении */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   }
   
   .lesson-type {
-    font-weight: normal;
+    font-weight: bold;
     margin-bottom: 5px;
-    font-family: 'Helvetica', 'Arial', sans-serif;
   }
   
   .lecture {
-    color: #000000; /* Черный для лекций */
+    color: #000000;
   }
   
   .pz {
-    color: #002147; /* Темно-синий для практических занятий */
+    color: #002147;
   }
   
   .lab {
-    color: #dc3545; /* Красный для лабораторных */
+    color: #dc3545;
   }
   
   .teacher {
     font-size: 0.9rem;
-    color: #000;
+    color: #666;
     margin-bottom: 5px;
-    font-family: 'Helvetica', 'Arial', sans-serif;
   }
   
   .room {
     font-size: 0.9rem;
-    color: #000;
-    font-family: 'Helvetica', 'Arial', sans-serif;
+    color: #666;
   }
   
   .empty-cell {
-    border: none;
-    /* border-top: 2px solid #000; */
-    padding: 12px 0;
+    border: 1px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
     margin-bottom: 15px;
-    background-color: transparent;
-    min-height: auto;
+    background-color: #f8f9fa;
+    min-height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #000;
-    font-style: normal;
-    font-family: 'Helvetica', 'Arial', sans-serif;
+    color: #666;
+    font-style: italic;
   }
   
   .schedule-column {
@@ -121,7 +115,7 @@
   .day-section {
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: none;
+    border-bottom: 1px solid #eee;
   }
   
   .day-section:last-child {
@@ -138,16 +132,15 @@
   }
 
   .dark-text {
-    color: #000;
-    font-weight: normal;
-    font-size: 1rem;
-    font-family: 'Helvetica', 'Arial', sans-serif;
+    color: #1e0023ff; /* или #000, если хочешь чёрный */
+    font-weight: bold;
+    font-size: 1.25rem;
   }
   
   .arrow-icon {
     transition: transform 0.3s ease;
     font-size: 1.2rem;
-    color: #000;
+    color: #666;
   }
   
   .arrow-icon.collapsed {
@@ -161,11 +154,13 @@
     }
     
     .lesson-card {
-        padding: 10px 0;
+        padding: 12px;
+        min-height: 60px;
     }
     
     .empty-cell {
-        padding: 10px 0;
+        padding: 12px;
+        min-height: 60px;
     }
     
     .schedule-column {
@@ -185,7 +180,7 @@
             <div class="day-header"><%= @days[day_index] %></div>
 
             <% @times.each do |time_str| %>
-              <div class="row mb-3 border border-left-0 border-bottom-0 border-right-0 border-dark">
+              <div class="row mb-3">
                 <div class="col-auto time-column"><%= time_str %></div>
                 <div class="col">
                   <% lessons_at_time = dates_schedule[:schedule].select do |lesson|

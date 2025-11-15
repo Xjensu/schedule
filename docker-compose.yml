@@ -39,8 +39,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5432:5432"
     networks:
       - internal_network
       - postgres
@@ -63,8 +61,6 @@ services:
     image: redis:8.2-alpine
     container_name: redis-master
     hostname: redis-master
-    ports:
-      - "6379:6379"
     volumes:
       - redis-master-data:/data
     environment:
@@ -97,7 +93,7 @@ services:
     command: bundle exec sidekiq -C config/sidekiq.yml
     environment:
       - RAILS_ENV=${RAILS_ENV}
-      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_HOST=main-database
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -122,12 +118,12 @@ services:
         
   # RAILS APP CLUSTERS
   rails-app-1:
-    build: .
+    build: xjensu/bsut-schedule:latest
     command: "./bin/rails server -b 0.0.0.0"
     container_name: rails-app1
     environment:
       - RAILS_ENV=${RAILS_ENV}
-      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_HOST=main-database
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -151,12 +147,12 @@ services:
     restart: always
   
   rails-app-2:
-    build: .
+    build: xjensu/bsut-schedule:latest
     command: "./bin/rails server -b 0.0.0.0"
     container_name: rails-app2
     environment:
       - RAILS_ENV=${RAILS_ENV}
-      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_HOST=main-database
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}

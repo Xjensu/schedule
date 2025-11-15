@@ -62,14 +62,6 @@ RUN yarn install --immutable
 # Copy application code
 COPY . .
 
-RUN chmod +x ./bin/rails
-RUN chmod +x ./bin/bundle
-RUN chmod +x ./bin/rake
-
-RUN echo "$RAILS_MASTER_KEY" > config/master.key
-
-RUN chmod 600 config/master.key
-
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 

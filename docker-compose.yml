@@ -8,7 +8,7 @@ services:
     command: 
       - "postgres"
       - "-c"
-      - "max_connections=50"
+      - "max_connections=100"
       - "-c"
       - "shared_buffers=1GB"
       - "-c"
@@ -118,7 +118,7 @@ services:
         
   # RAILS APP CLUSTERS
   rails-app-1:
-    build: xjensu/bsut-schedule:latest
+    image: xjensu/bsut-schedule:latest
     command: "./bin/rails server -b 0.0.0.0"
     container_name: rails-app1
     environment:
@@ -137,17 +137,28 @@ services:
       - MAILER_PASSWORD=${MAILER_PASSWORD}
       - DOMAIN=${DOMAIN}
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis-master:6379/0
+      
+      # Оптимизация Puma
+      - WEB_CONCURRENCY=4
+      - RAILS_MAX_THREADS=16
+      - PUMA_BACKLOG=2048
+      - PUMA_WAIT_FOR_LESS_BUSY_WORKER=0.001
     volumes:
       - app-storage:/rails/storage
     depends_on:
       - main-database
       - redis-master
     networks:
-      internal_network: 
+      internal_network:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
     restart: always
   
   rails-app-2:
-    build: xjensu/bsut-schedule:latest
+    image: xjensu/bsut-schedule:latest
     command: "./bin/rails server -b 0.0.0.0"
     container_name: rails-app2
     environment:
@@ -167,6 +178,12 @@ services:
       - DOMAIN=${DOMAIN}
 
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis-master:6379/0
+      
+      # Оптимизация Puma
+      - WEB_CONCURRENCY=4
+      - RAILS_MAX_THREADS=16
+      - PUMA_BACKLOG=2048
+      - PUMA_WAIT_FOR_LESS_BUSY_WORKER=0.001
     volumes:
       - app-storage:/rails/storage
     depends_on:
@@ -174,6 +191,11 @@ services:
       - redis-master
     networks:
       internal_network:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
     restart: always
 
   # NGINX

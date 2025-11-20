@@ -12,7 +12,12 @@ Rails.application.configure do
   config.cache_store = :redis_cache_store, {
     url: ENV.fetch('REDIS_URL') { 'redis://:password@redis-master:6379/0' },
     password: ENV['REDIS_PASSWORD'],
-    namespace: "cache:production"
+    namespace: "cache:production",
+    # Оптимизация Redis пула соединений
+    pool_size: ENV.fetch("RAILS_MAX_THREADS") { 20 }.to_i,
+    pool_timeout: 5,
+    reconnect_attempts: 3,
+    driver: :hiredis
   }
 
   config.time_zone = "Moscow"
@@ -40,6 +45,11 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
   config.active_record.attributes_for_inspect = [ :id ]
+  
+  # Оптимизация Active Record
+  config.active_record.query_log_tags_enabled = false
+  config.active_record.automatic_scope_inversing = true
+  config.active_record.strict_loading_by_default = false
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {

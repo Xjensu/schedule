@@ -8,6 +8,12 @@ gem "propshaft"
 gem "pg", "~> 1.1"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
+
+# Опционально: Falcon для высокой производительности (async I/O)
+# Раскомментируйте для использования Falcon вместо Puma:
+# gem "falcon", "~> 0.47"
+# gem "async-io", "~> 1.43"
+# gem "async-http", "~> 0.66"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]

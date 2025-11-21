@@ -88,6 +88,6 @@ USER 1000:1000
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via puma
-EXPOSE 80
-CMD ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "80"]
+# Start server via Falcon
+EXPOSE 3000
+CMD ["bundle", "exec", "falcon", "serve", "-c", "config/falcon.rb"]

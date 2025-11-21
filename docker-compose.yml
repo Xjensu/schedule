@@ -118,8 +118,10 @@ services:
         
   # RAILS APP CLUSTERS
   rails-app-1:
-    image: xjensu/bsut-schedule:latest
-    command: "./bin/rails server -b 0.0.0.0"
+    build: .
+    command: "bundle exec falcon serve -c config/falcon.rb"
+    ports:
+      - "3000:3000"
     container_name: rails-app1
     environment:
       - RAILS_ENV=${RAILS_ENV}
@@ -138,28 +140,27 @@ services:
       - DOMAIN=${DOMAIN}
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis-master:6379/0
       
-      # Оптимизация Puma
-      - WEB_CONCURRENCY=4
-      - RAILS_MAX_THREADS=16
-      - PUMA_BACKLOG=2048
-      - PUMA_WAIT_FOR_LESS_BUSY_WORKER=0.001
+      # Оптимизация Falcon (использует меньше воркеров из-за async)
+      - WEB_CONCURRENCY=2
+      - RAILS_MAX_THREADS=32
+      - FALCON_PRELOAD=true
+      - FALCON_MAX_BODY_SIZE=104857600
+      - FALCON_READ_TIMEOUT=30
+      - FALCON_WRITE_TIMEOUT=30
     volumes:
       - app-storage:/rails/storage
     depends_on:
       - main-database
       - redis-master
     networks:
-      internal_network:
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 2G
+      internal_network: 
     restart: always
   
   rails-app-2:
-    image: xjensu/bsut-schedule:latest
-    command: "./bin/rails server -b 0.0.0.0"
+    build: .
+    command: "bundle exec falcon serve -c config/falcon.rb"
+    ports:
+      - "3001:3000"
     container_name: rails-app2
     environment:
       - RAILS_ENV=${RAILS_ENV}
@@ -179,11 +180,13 @@ services:
 
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis-master:6379/0
       
-      # Оптимизация Puma
-      - WEB_CONCURRENCY=4
-      - RAILS_MAX_THREADS=16
-      - PUMA_BACKLOG=2048
-      - PUMA_WAIT_FOR_LESS_BUSY_WORKER=0.001
+      # Оптимизация Falcon
+      - WEB_CONCURRENCY=2
+      - RAILS_MAX_THREADS=32
+      - FALCON_PRELOAD=true
+      - FALCON_MAX_BODY_SIZE=104857600
+      - FALCON_READ_TIMEOUT=30
+      - FALCON_WRITE_TIMEOUT=30
     volumes:
       - app-storage:/rails/storage
     depends_on:
@@ -191,11 +194,6 @@ services:
       - redis-master
     networks:
       internal_network:
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 2G
     restart: always
 
   # NGINX

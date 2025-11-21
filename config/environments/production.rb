@@ -10,14 +10,15 @@ Rails.application.configure do
   config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
 
   config.cache_store = :redis_cache_store, {
-    url: ENV.fetch('REDIS_URL') { 'redis://:password@redis-master:6379/0' },
+    url: ENV.fetch('REDIS_URL') { 'redis://@redis-master:6379/0' },
     password: ENV['REDIS_PASSWORD'],
     namespace: "cache:production",
-    # Оптимизация Redis пула соединений
-    pool_size: ENV.fetch("RAILS_MAX_THREADS") { 20 }.to_i,
-    pool_timeout: 5,
     reconnect_attempts: 3,
-    driver: :hiredis
+    driver: :hiredis,
+    # Дополнительная оптимизация для высокой нагрузки
+    connect_timeout: 1,
+    read_timeout: 1,
+    write_timeout: 1
   }
 
   config.time_zone = "Moscow"
@@ -50,6 +51,13 @@ Rails.application.configure do
   config.active_record.query_log_tags_enabled = false
   config.active_record.automatic_scope_inversing = true
   config.active_record.strict_loading_by_default = false
+  
+  # Отключение verbose query logs для производительности
+  config.active_record.verbose_query_logs = false
+  
+  # Оптимизация middleware stack
+  config.middleware.delete Rack::ETag
+  config.middleware.delete Rack::Sendfile
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {

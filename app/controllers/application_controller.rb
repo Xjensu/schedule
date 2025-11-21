@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
   
-  allow_browser versions: :modern
+  # allow_browser versions: :modern  # Отключено для максимальной производительности
   protect_from_forgery with: :exception
 
   private

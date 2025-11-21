@@ -6,14 +6,12 @@ gem "rails", "~> 8.0.2.1"
 gem "propshaft"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
-# Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
-
-# Опционально: Falcon для высокой производительности (async I/O)
-# Раскомментируйте для использования Falcon вместо Puma:
-# gem "falcon", "~> 0.47"
-# gem "async-io", "~> 1.43"
-# gem "async-http", "~> 0.66"
+# Use Falcon - высокопроизводительный async веб-сервер
+gem "falcon", "~> 0.48"
+# Async библиотеки для Falcon
+gem "async", "~> 2.0"
+gem "async-http", "~> 0.80"
+gem "async-io", "~> 1.43"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
@@ -83,7 +81,8 @@ gem 'redis-namespace', '~> 1.11.0'
 
 gem "dotenv-rails", "~> 3.1", groups: [:development, :test, :production]
 
-gem "hiredis", "~> 0.6.3"
+# Hiredis для оптимизации производительности Redis
+gem "hiredis-client", "~> 0.22"
 
 gem "sidekiq", "~> 8.0"
 
@@ -94,3 +93,6 @@ gem "devise-security", "~> 0.18.0"
 gem 'nokogiri', '>= 1.18.9'
 
 gem 'rack', '>= 3.2.2'
+
+# Таймауты для защиты от медленных запросов (опционально)
+# gem 'rack-timeout', '~> 0.7'

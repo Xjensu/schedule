@@ -133,7 +133,8 @@ GEM
       raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    hiredis (0.6.3)
+    hiredis-client (0.26.1)
+      redis-client (= 0.26.1)
     htmlbeautifier (1.4.3)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
@@ -175,6 +176,7 @@ GEM
     mini_mime (1.1.5)
     minitest (5.25.5)
     msgpack (1.8.0)
+    nakayoshi_fork (0.0.4)
     net-imap (0.5.9)
       date
       net-protocol
@@ -406,11 +408,12 @@ DEPENDENCIES
   devise (~> 4.9)
   devise-security (~> 0.18.0)
   dotenv-rails (~> 3.1)
-  hiredis (~> 0.6.3)
+  hiredis-client (~> 0.22)
   htmlbeautifier (~> 1.4)
   jbuilder
   jsbundling-rails
   kamal
+  nakayoshi_fork (~> 0.0.4)
   nokogiri (>= 1.18.9)
   pg (~> 1.1)
   propshaft

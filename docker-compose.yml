@@ -119,9 +119,7 @@ services:
   # RAILS APP CLUSTERS
   rails-app-1:
     build: .
-    command: "bundle exec falcon serve -c config/falcon.rb"
-    ports:
-      - "3000:3000"
+    command: "bundle exec falcon.rb"
     container_name: rails-app1
     environment:
       - RAILS_ENV=${RAILS_ENV}
@@ -140,7 +138,6 @@ services:
       - DOMAIN=${DOMAIN}
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis-master:6379/0
       
-      # Оптимизация Falcon (использует меньше воркеров из-за async)
       - WEB_CONCURRENCY=2
       - RAILS_MAX_THREADS=32
       - FALCON_PRELOAD=true
@@ -158,9 +155,7 @@ services:
   
   rails-app-2:
     build: .
-    command: "bundle exec falcon serve -c config/falcon.rb"
-    ports:
-      - "3001:3000"
+    command: "bundle exec falcon.rb"
     container_name: rails-app2
     environment:
       - RAILS_ENV=${RAILS_ENV}

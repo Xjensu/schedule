@@ -6,8 +6,6 @@ threads threads_count, threads_count
 
 preload_app!
 
-# Nakayoshi fork для оптимизации памяти (GC перед форком)
-# Вызывается ПЕРЕД созданием воркеров
 before_fork do
   if ENV["RAILS_ENV"] == "production"
     require 'nakayoshi_fork'

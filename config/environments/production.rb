@@ -15,7 +15,6 @@ Rails.application.configure do
     namespace: "cache:production",
     reconnect_attempts: 3,
     driver: :hiredis,
-    # Дополнительная оптимизация для высокой нагрузки
     connect_timeout: 1,
     read_timeout: 1,
     write_timeout: 1

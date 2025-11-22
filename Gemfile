@@ -6,12 +6,6 @@ gem "rails", "~> 8.0.2.1"
 gem "propshaft"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
-# Use Falcon - высокопроизводительный async веб-сервер
-gem "falcon", "~> 0.48"
-# Async библиотеки для Falcon
-gem "async", "~> 2.0"
-gem "async-http", "~> 0.80"
-gem "async-io", "~> 1.43"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
@@ -23,6 +17,7 @@ gem "cssbundling-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
+gem "puma", ">= 5.0"
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
@@ -94,5 +89,8 @@ gem 'nokogiri', '>= 1.18.9'
 
 gem 'rack', '>= 3.2.2'
 
-# Таймауты для защиты от медленных запросов (опционально)
-# gem 'rack-timeout', '~> 0.7'
+gem 'rack-timeout', '~> 0.7'
+
+gem "nakayoshi_fork", "~> 0.0.4"
+
+gem "falcon", "~> 0.52.4"

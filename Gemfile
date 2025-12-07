@@ -74,7 +74,7 @@ gem "htmlbeautifier", "~> 1.4"
 gem 'redis', '~> 5.1.0'
 gem 'redis-namespace', '~> 1.11.0'
 
-gem "dotenv-rails", "~> 3.1", groups: [:development, :test, :production]
+gem "dotenv-rails", "~> 3.2", ">= 3.2.0", groups: [:development, :test, :production]
 
 # Hiredis для оптимизации производительности Redis
 gem "hiredis-client", "~> 0.22"
